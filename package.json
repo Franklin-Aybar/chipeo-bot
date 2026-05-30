@@ -1,19 +1,16 @@
 {
-  "name": "chipeo-the-project-bot",
+  "name": "music-bot",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
   },
   "dependencies": {
-    "discord.js": "^14.14.1",
-    "express": "^4.18.2",
-    "kazagumo": "^2.1.2",
-    "shoukaku": "^2.4.2"
-  },
-  "engines": {
-    "node": ">=16.9.0"
-  },
-  "author": "Los Reales Game de Computadora",
-  "license": "ISC"
+    "discord.js": "^14.16.0",
+    "@discordjs/voice": "^0.17.0",
+    "@discordjs/opus": "^0.10.0",
+    "play-dl": "^1.9.7",
+    "sodium-native": "^4.0.0",
+    "ffmpeg-static": "^5.2.0"
+  }
 }
