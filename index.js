@@ -88,7 +88,7 @@ app.get('/', (req, res) => {
         <body>
             <div class="container">
                 <h1>🔊 CHIPIEO THE PROJECT BOT 🔊</h1>
-                <p class="subtitle">El Bot de la L</p>
+                <p class="subtitle">CHIPIEO THE PROJECT BOT</p>
                 
                 <div class="status-card">
                     <span style="font-size: 18px; font-weight: bold;">Estado del Bot:</span>
