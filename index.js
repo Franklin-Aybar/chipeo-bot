@@ -4,10 +4,10 @@ const { Kazagumo } = require('kazagumo');
 const express = require('express');
 const app = express();
 
-// URL DIRECTA DE TU LOGO OFICIAL
+// LOGO OFICIAL DE CHIPEO THE PROJECT
 const LOGO_BOT = "https://raw.githubusercontent.com/Franklin-Aybar/chipeo-bot/main/Chipeo_The_Project_Mesa_de_trabajo_1_Mesa_de_trabajo_1_Mesa_de_trabajo_1_Mesa_de_trabajo_1.png";
 
-// LA PÁGINA WEB EXACTA A TU CAPTURA (Fondo oscuro, borde neón brillante y créditos)
+// PÁGINA WEB OFICIAL (Estilo BOT-LA-L y Los Reales Game de Computadora)
 app.get('/', (req, res) => { 
     res.send(`
         <!DOCTYPE html>
@@ -15,7 +15,7 @@ app.get('/', (req, res) => {
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>BOT-LA-L | Panel Control</title>
+            <title>BOT-LA-L | Panel de Control</title>
             <style>
                 body {
                     background-color: #06060c;
@@ -60,7 +60,6 @@ app.get('/', (req, res) => {
                     font-weight: bold;
                     margin-top: 2px;
                     margin-bottom: 30px;
-                    letter-spacing: 0.5px;
                 }
                 .status-card {
                     background-color: #161622;
@@ -75,7 +74,6 @@ app.get('/', (req, res) => {
                 .status-label {
                     font-size: 19px;
                     font-weight: bold;
-                    color: #ffffff;
                 }
                 .status-value {
                     display: flex;
@@ -100,8 +98,6 @@ app.get('/', (req, res) => {
                     color: #8c8cbd;
                     line-height: 1.6;
                     font-size: 15px;
-                    margin: 25px auto;
-                    max-width: 550px;
                 }
                 .divider {
                     border: none;
@@ -165,7 +161,7 @@ const client = new Client({
     ]
 });
 
-// NODOS LAVALINK PÚBLICOS OPERATIVOS
+// NODOS LAVALINK PÚBLICOS ESTABLES Y VERIFICADOS
 const Nodes = [
     {
         name: 'Chipeo-Node-A',
@@ -181,7 +177,7 @@ const Nodes = [
     }
 ];
 
-// INICIALIZACIÓN CONFIGURADA CORRECTAMENTE PARA EVITAR EL ERROR DE "connector.set"
+// ARREGLO CRÍTICO: Inicialización directa del Connector pasando el cliente directamente a Kazagumo
 const shoukaku = new Shoukaku(new Connectors.DiscordJS(client), Nodes, {
     moveOnDisconnect: true,
     reconnectTries: 5,
@@ -191,7 +187,7 @@ const shoukaku = new Shoukaku(new Connectors.DiscordJS(client), Nodes, {
 const kazagumo = new Kazagumo({
     plugins: [],
     defaultSearchEngine: 'youtube',
-    // Pasamos las funciones directamente para prevenir conflictos de librerías
+    // Forzamos el envío de datos directamente por los Shards para saltarnos el error interno de Shoukaku
     send: (id, payload) => {
         const guild = client.guilds.cache.get(id);
         if (guild) guild.shard.send(payload);
@@ -228,9 +224,8 @@ client.on('ready', async () => {
     } catch (error) { console.error(error); }
 });
 
-// Evitar crasheos en la consola si el servidor Lavalink parpadea
 shoukaku.on('error', (name, error) => {
-    console.log(`⚠️ Nodo [${name}] ocupado o reconectando en segundo plano.`);
+    console.log(`⚠️ Nodo [${name}] reconectando en segundo plano.`);
 });
 
 client.on('interactionCreate', async (interaction) => {
@@ -279,7 +274,7 @@ client.on('interactionCreate', async (interaction) => {
             const result = await kazagumo.search(query, { requester: interaction.user });
             
             if (!result || !result.tracks || !result.tracks.length) {
-                return interaction.editReply('❌ No encontré ninguna pista con ese nombre. Cambia las palabras clave.');
+                return interaction.editReply('❌ No encontré ninguna pista con ese nombre.');
             }
 
             voicePlayer.queue.add(result.tracks[0]);
@@ -295,7 +290,7 @@ client.on('interactionCreate', async (interaction) => {
             return interaction.editReply({ content: ' ', embeds: [embedPlay] });
 
         } catch (e) {
-            return interaction.editReply('⚠️ **El sistema de audio está sincronizando las frecuencias.** Espera 10 segundos y vuelve a usar el comando, por favor.');
+            return interaction.editReply('⚠️ **El sistema de audio está sincronizando las frecuencias.** Espera unos segundos y vuelve a ponerla.');
         }
     }
 
@@ -305,22 +300,9 @@ client.on('interactionCreate', async (interaction) => {
         }
     }
 
-    if (commandName === 'skip') {
-        player.skip();
-        return interaction.reply('⏭️ ¡Track saltado!');
-    }
-
-    if (commandName === 'pause') {
-        if (player.paused) return interaction.reply({ content: '⚠️ Ya está en pausa.', ephemeral: true });
-        player.pause(true);
-        return interaction.reply('⏸️ Sonido pausado.');
-    }
-
-    if (commandName === 'resume') {
-        if (!player.paused) return interaction.reply({ content: '⚠️ El sonido ya está activo.', ephemeral: true });
-        player.pause(false);
-        return interaction.reply('▶️ ¡Sigue el chipeo activo! Bajos encendidos.');
-    }
+    if (commandName === 'skip') { player.skip(); return interaction.reply('⏭️ ¡Track saltado!'); }
+    if (commandName === 'pause') { player.pause(true); return interaction.reply('⏸️ Sonido pausado.'); }
+    if (commandName === 'resume') { player.pause(false); return interaction.reply('▶️ ¡Sigue el chipeo activo!'); }
 
     if (commandName === 'queue') {
         const lista = player.queue.map((track, index) => `**${index + 1}.** ${track.title}`).join('\n');
@@ -334,20 +316,16 @@ client.on('interactionCreate', async (interaction) => {
 
     if (commandName === 'nowplaying') {
         const track = player.queue.current;
-        if (!track) return interaction.reply('No hay nada reproduciéndose.');
+        if (!track) return interaction.reply('No hay nada sonando.');
         const embedNp = new EmbedBuilder()
             .setColor('#00ffcc')
             .setTitle('🔊 ESCUCHANDO EN VIVO 🔊')
             .setDescription(`**[${track.title}](${track.uri})**`)
-            .setThumbnail(LOGO_BOT)
-            .addFields({ name: '👤 Pedido por', value: `${track.requester}`, inline: true });
+            .setThumbnail(LOGO_BOT);
         return interaction.reply({ embeds: [embedNp] });
     }
 
-    if (commandName === 'stop') {
-        player.destroy();
-        return interaction.reply('🔇 ¡Muro apagado! Cola vacía y bot desconectado.');
-    }
+    if (commandName === 'stop') { player.destroy(); return interaction.reply('🔇 ¡Muro apagado y cola vacía!'); }
 });
 
 client.login(process.env.TOKEN);
