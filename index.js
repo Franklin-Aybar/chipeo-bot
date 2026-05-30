@@ -12,13 +12,27 @@ const {
     createAudioResource,
     AudioPlayerStatus,
     VoiceConnectionStatus,
-    getVoiceConnection
 } = require('@discordjs/voice');
 
 const play = require('play-dl');
+const fs = require('fs');
+const path = require('path');
 
 const TOKEN     = process.env.TOKEN;
 const CLIENT_ID = process.env.CLIENT_ID;
+
+// ── Cargar cookies de YouTube ──
+(async () => {
+    try {
+        const cookiePath = path.join(__dirname, 'cookies.txt');
+        if (fs.existsSync(cookiePath)) {
+            await play.setToken({ useragent: ['Mozilla/5.0'], cookie: fs.readFileSync(cookiePath, 'utf-8') });
+            console.log('✅ Cookies de YouTube cargadas');
+        }
+    } catch (e) {
+        console.error('Error cargando cookies:', e);
+    }
+})();
 
 const client = new Client({
     intents: [
@@ -28,7 +42,6 @@ const client = new Client({
     ]
 });
 
-// Cola por servidor
 const servers = new Map();
 
 function getServer(guildId) {
@@ -129,17 +142,21 @@ client.on('interactionCreate', async (interaction) => {
         try {
             let trackUrl, trackTitle, trackDuration;
 
-            if (play.yt_validate(query) === 'video') {
+            const validated = play.yt_validate(query);
+
+            if (validated === 'video') {
                 const info = await play.video_info(query);
                 trackUrl      = query;
                 trackTitle    = info.video_details.title;
                 trackDuration = info.video_details.durationRaw;
-            } else {
-                const results = await play.search(query, { limit: 1 });
+            } else if (validated === 'search' || !validated) {
+                const results = await play.search(query, { limit: 1, source: { youtube: 'video' } });
                 if (!results.length) return interaction.editReply('❌ No encontré esa canción.');
                 trackUrl      = results[0].url;
                 trackTitle    = results[0].title;
                 trackDuration = results[0].durationRaw;
+            } else {
+                return interaction.editReply('❌ Solo acepto videos o nombres de YouTube.');
             }
 
             const track = { url: trackUrl, title: trackTitle, duration: trackDuration || '??:??', requester: interaction.user.username };
