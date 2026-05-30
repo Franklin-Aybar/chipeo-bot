@@ -4,7 +4,7 @@ const { Kazagumo } = require('kazagumo');
 const express = require('express');
 const app = express();
 
-// DASHBOARD WEB BASE
+// PÁGINA WEB - DASHBOARD AVANZADO CON EL PIQUETE DEL TEAM TÁCTICO
 app.get('/', (req, res) => { 
     res.send(`
         <!DOCTYPE html>
@@ -14,31 +14,191 @@ app.get('/', (req, res) => {
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <title>Chipeo The Project Bot | Web Oficial</title>
             <style>
-                body { background-color: #0b0b0f; color: #ffffff; font-family: sans-serif; margin: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; }
-                .container { background: linear-gradient(145deg, #12121a, #1a1a26); border: 2px solid #a855f7; border-radius: 20px; padding: 40px; text-align: center; box-shadow: 0 0 30px #a855f7; max-width: 600px; width: 90%; }
-                h1 { color: #ffffff; text-shadow: 0 0 10px #a855f7; }
-                .subtitle { color: #a855f7; font-size: 20px; font-weight: bold; margin-bottom: 25px; }
-                .status-card { background-color: #1f1f2e; border-left: 5px solid #00ffcc; padding: 15px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-                .status-dot { width: 15px; height: 15px; background-color: #00ffcc; border-radius: 50%; box-shadow: 0 0 10px #00ffcc; }
-                .btn-dashboard { background-color: #a855f7; color: white; border: none; padding: 12px 25px; font-size: 16px; font-weight: bold; border-radius: 8px; cursor: pointer; box-shadow: 0 0 15px #a855f7; text-decoration: none; display: inline-block; }
-                .footer { margin-top: 30px; font-size: 15px; color: #73738c; border-top: 1px solid #2d2d3f; padding-top: 15px; }
+                body { 
+                    background-color: #0b0b0f; 
+                    color: #ffffff; 
+                    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+                    margin: 0; 
+                    padding: 0;
+                    display: flex; 
+                    flex-direction: column; 
+                    align-items: center; 
+                    justify-content: center; 
+                    min-height: 100vh;
+                }
+                .container { 
+                    background: linear-gradient(145deg, #12121a, #1a1a26); 
+                    border: 2px solid #a855f7; 
+                    border-radius: 20px; 
+                    padding: 35px; 
+                    text-align: center; 
+                    box-shadow: 0 0 35px rgba(168, 85, 247, 0.4); 
+                    max-width: 850px; 
+                    width: 90%; 
+                    margin: 20px auto;
+                }
+                h1 { 
+                    color: #ffffff; 
+                    text-shadow: 0 0 15px #a855f7; 
+                    font-size: 32px;
+                    margin-bottom: 5px;
+                    letter-spacing: 2px;
+                }
+                .subtitle { 
+                    color: #a855f7; 
+                    font-size: 22px; 
+                    font-weight: bold; 
+                    margin-top: 0;
+                    margin-bottom: 25px; 
+                    text-shadow: 0 0 5px rgba(168, 85, 247, 0.5);
+                }
+                .status-card { 
+                    background-color: #171724; 
+                    border: 1px solid #2d2d3f;
+                    border-left: 5px solid #00ffcc; 
+                    padding: 15px 25px; 
+                    border-radius: 10px; 
+                    display: flex; 
+                    justify-content: space-between; 
+                    align-items: center; 
+                    margin-bottom: 30px; 
+                }
+                .status-dot { 
+                    width: 14px; 
+                    height: 14px; 
+                    background-color: #00ffcc; 
+                    border-radius: 50%; 
+                    box-shadow: 0 0 12px #00ffcc; 
+                    animation: pulse 1.5s infinite;
+                }
+                
+                /* GRILLA DE MÓDULOS ESTILO BOT GRANDE */
+                .modules-grid {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+                    gap: 20px;
+                    margin-top: 20px;
+                }
+                .module-card {
+                    background: #151522;
+                    border: 1px solid #252538;
+                    border-radius: 12px;
+                    padding: 20px;
+                    text-align: left;
+                    transition: all 0.3s ease;
+                }
+                .module-card:hover {
+                    transform: translateY(-5px);
+                    border-color: #a855f7;
+                    box-shadow: 0 5px 15px rgba(168, 85, 247, 0.2);
+                }
+                .module-icon {
+                    font-size: 24px;
+                    margin-bottom: 10px;
+                }
+                .module-card h3 {
+                    margin: 0 0 8px 0;
+                    color: #ffffff;
+                    font-size: 18px;
+                }
+                .module-card p {
+                    margin: 0 0 15px 0;
+                    color: #a3a3c2;
+                    font-size: 14px;
+                    line-height: 1.4;
+                }
+                .btn-module {
+                    background-color: #1f1f33;
+                    color: #a855f7;
+                    border: 1px solid #a855f7;
+                    padding: 8px 15px;
+                    font-size: 13px;
+                    font-weight: bold;
+                    border-radius: 6px;
+                    cursor: pointer;
+                    width: 100%;
+                    transition: 0.2s;
+                }
+                .btn-module:hover {
+                    background-color: #a855f7;
+                    color: #white;
+                    box-shadow: 0 0 10px rgba(168, 85, 247, 0.4);
+                }
+
+                .btn-login { 
+                    background: linear-gradient(90deg, #a855f7, #7e22ce);
+                    color: white; 
+                    border: none; 
+                    padding: 14px 35px; 
+                    font-size: 16px; 
+                    font-weight: bold; 
+                    border-radius: 8px; 
+                    cursor: pointer; 
+                    box-shadow: 0 0 20px rgba(168, 85, 247, 0.5); 
+                    text-decoration: none; 
+                    display: inline-block; 
+                    margin-top: 30px;
+                    transition: 0.3s;
+                }
+                .btn-login:hover { 
+                    transform: scale(1.03);
+                    box-shadow: 0 0 30px #a855f7; 
+                }
+                .footer { 
+                    margin-top: 40px; 
+                    font-size: 15px; 
+                    color: #73738c; 
+                    border-top: 1px solid #2d2d3f; 
+                    padding-top: 15px; 
+                }
                 .footer span { color: #a855f7; font-weight: bold; }
+                
+                @keyframes pulse {
+                    0% { transform: scale(0.9); opacity: 0.7; }
+                    50% { transform: scale(1.1); opacity: 1; }
+                    100% { transform: scale(0.9); opacity: 0.7; }
+                }
             </style>
         </head>
         <body>
             <div class="container">
                 <h1>🔊 CHIPIEO THE PROJECT BOT 🔊</h1>
                 <p class="subtitle">El Bot de la L</p>
+                
                 <div class="status-card">
-                    <span style="font-weight: bold;">Estado del Bot:</span>
+                    <span style="font-size: 18px; font-weight: bold;">Estado del Bot:</span>
                     <div style="display: flex; align-items: center; gap: 10px;">
-                        <span style="color: #00ffcc; font-weight: bold;">ONLINE</span>
+                        <span style="color: #00ffcc; font-weight: bold; letter-spacing: 1px;">ONLINE</span>
                         <div class="status-dot"></div>
                     </div>
                 </div>
-                <p style="color: #a3a3c2;">Panel de Control. Módulo de Música Avanzado (Estilo Jockey/Koya) Activo.</p>
-                <a href="#" class="btn-dashboard">Iniciar Sesión con Discord</a>
-                <div class="footer">Desarrollado con toda la grasa por el <span>Team Táctico</span></div>
+
+                <div class="modules-grid">
+                    <div class="module-card">
+                        <div class="module-icon">🎵</div>
+                        <h3>Módulo de Música</h3>
+                        <p>Controla el sistema de reproducción avanzado estilo Jockey de los canales de voz.</p>
+                        <button class="btn-module">Configurar Música</button>
+                    </div>
+                    <div class="module-card">
+                        <div class="module-icon">🛡️</div>
+                        <h3>Moderación Táctica</h3>
+                        <p>Limpia chats, banea y silencia usuarios molestos para mantener la paz en el bloque.</p>
+                        <button class="btn-module">Configurar Filtros</button>
+                    </div>
+                    <div class="module-card">
+                        <div class="module-icon">👋</div>
+                        <h3>Bienvenidas</h3>
+                        <p>Dale la pauta oficial y saluda automáticamente a los nuevos musicólogos del servidor.</p>
+                        <button class="btn-module">Configurar Mensajes</button>
+                    </div>
+                </div>
+
+                <a href="#" class="btn-login">Panel de Control General</a>
+
+                <div class="footer">
+                    Desarrollado con toda la grasa por el <span>Team Táctico</span>
+                </div>
             </div>
         </body>
         </html>
@@ -67,7 +227,6 @@ const kazagumo = new Kazagumo({
     defaultSearchEngine: 'youtube'
 }, new Shoukaku(new Connectors.DiscordJS(client), Nodes));
 
-// TODOS LOS COMANDOS ESTILO JOCKEY / KOYA
 const commands = [
     { name: 'ping', description: 'Prueba si el sistema de sonido del bot está ready' },
     {
@@ -102,7 +261,6 @@ client.on('interactionCreate', async (interaction) => {
     if (!interaction.isChatInputCommand()) return;
     const { commandName } = interaction;
 
-    // COMANDOS BÁSICOS
     if (commandName === 'ping') return interaction.reply({ content: '🎛️ ¡El sistema de sonido está activo y nítido! 🔊🔥' });
     
     if (commandName === 'say') {
@@ -124,10 +282,8 @@ client.on('interactionCreate', async (interaction) => {
         return interaction.reply({ embeds: [embed] });
     }
 
-    // SISTEMA DE MÚSICA AVANZADO
     const player = kazagumo.players.get(interaction.guild.id);
 
-    // /play
     if (commandName === 'play') {
         const canalVoz = interaction.member.voice.channel;
         if (!canalVoz) return interaction.reply({ content: '⚠️ ¡Métete a un canal de voz primero, bro!', ephemeral: true });
@@ -162,34 +318,29 @@ client.on('interactionCreate', async (interaction) => {
         }
     }
 
-    // Verificar si el reproductor existe para los siguientes comandos
     if (!player) {
         if (['skip', 'pause', 'resume', 'queue', 'nowplaying', 'stop'].includes(commandName)) {
             return interaction.reply({ content: '❌ No hay ninguna pauta musical sonando ahora mismo.', ephemeral: true });
         }
     }
 
-    // /skip
     if (commandName === 'skip') {
         player.skip();
         return interaction.reply('⏭️ ¡Canción saltada! Pasando a la siguiente.');
     }
 
-    // /pause
     if (commandName === 'pause') {
         if (player.paused) return interaction.reply({ content: '⚠️ El sistema ya está pausado.', ephemeral: true });
         player.pause(true);
         return interaction.reply('⏸️ Música pausada.');
     }
 
-    // /resume
     if (commandName === 'resume') {
         if (!player.paused) return interaction.reply({ content: '⚠️ La música ya está sonando.', ephemeral: true });
         player.pause(false);
         return interaction.reply('▶️ Sistema activo otra vez, ¡que sigan los bajos!');
     }
 
-    // /queue
     if (commandName === 'queue') {
         const lista = player.queue.map((track, index) => `**${index + 1}.** ${track.title}`).join('\n');
         const embedQueue = new EmbedBuilder()
@@ -199,7 +350,6 @@ client.on('interactionCreate', async (interaction) => {
         return interaction.reply({ embeds: [embedQueue] });
     }
 
-    // /nowplaying
     if (commandName === 'nowplaying') {
         const track = player.queue.current;
         if (!track) return interaction.reply('No hay nada sonando.');
@@ -212,7 +362,6 @@ client.on('interactionCreate', async (interaction) => {
         return interaction.reply({ embeds: [embedNp] });
     }
 
-    // /stop
     if (commandName === 'stop') {
         player.destroy();
         return interaction.reply('🔇 ¡Sistema apagado por completo! El bot limpió la cola y salió.');
