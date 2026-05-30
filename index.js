@@ -1,6 +1,6 @@
 const { Client, GatewayIntentBits, EmbedBuilder, REST, Routes } = require('discord.js');
 const { DisTube } = require('distube');
-const { YtDlpPlugin } = require('@distube/yt-dlp');
+const { YouTubePlugin } = require('@distube/youtube');
 const express = require('express');
 
 const TOKEN     = process.env.TOKEN;
@@ -22,7 +22,7 @@ const client = new Client({
 
 // ── DisTube con yt-dlp ──
 const distube = new DisTube(client, {
-    plugins: [new YtDlpPlugin({ update: false })]
+    plugins: [new YouTubePlugin()]
 });
 
 // ── Eventos DisTube ──
