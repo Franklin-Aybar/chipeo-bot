@@ -1,10 +1,21 @@
 {
-  "name": "chipeo-bot-247",
+  "name": "chipeo-the-project-bot",
   "version": "1.0.0",
+  "description": "El bot oficial de Chipeo The Project desarrollado por el Team Táctico",
   "main": "index.js",
-  "scripts": { "start": "node index.js" },
+  "scripts": {
+    "start": "node index.js"
+  },
   "dependencies": {
+    "@discordjs/voice": "^0.17.0",
     "discord.js": "^14.14.1",
-    "express": "^4.18.2"
-  }
+    "express": "^4.18.2",
+    "libsodium-wrappers": "^0.7.13",
+    "play-dl": "^1.9.7"
+  },
+  "engines": {
+    "node": ">=16.9.0"
+  },
+  "author": "Team Táctico",
+  "license": "ISC"
 }
