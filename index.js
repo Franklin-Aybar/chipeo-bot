@@ -3,15 +3,21 @@ const { DisTube } = require('distube');
 const { YouTubePlugin } = require('@distube/youtube');
 const express = require('express');
 
-const TOKEN     = process.env.TOKEN;
+const TOKEN = process.env.TOKEN;
 const CLIENT_ID = process.env.CLIENT_ID;
 
-// ── Servidor web para Render ──
+// Web Server para Render
 const app = express();
-app.get('/', (_, res) => res.send('✅ Bot online'));
-app.listen(process.env.PORT || 3000, () => console.log('✅ Servidor web activo'));
 
-// ── Cliente Discord ──
+app.get('/', (req, res) => {
+    res.send('✅ Ciphero Online');
+});
+
+app.listen(process.env.PORT || 3000, () => {
+    console.log('✅ Servidor web activo');
+});
+
+// Discord Client
 const client = new Client({
     intents: [
         GatewayIntentBits.Guilds,
@@ -20,7 +26,7 @@ const client = new Client({
     ]
 });
 
-// ── Cookies de YouTube (desde variable de entorno) ──
+// DisTube corregido
 const distube = new DisTube(client, {
     plugins: [
         new YouTubePlugin()
