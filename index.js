@@ -20,9 +20,14 @@ const client = new Client({
     ]
 });
 
-// ── DisTube con yt-dlp ──
+// ── Cookies de YouTube (desde variable de entorno) ──
+const ytCookies = process.env.YT_COOKIES || '';
+
+// ── DisTube con cookies ──
 const distube = new DisTube(client, {
-    plugins: [new YouTubePlugin()]
+    plugins: [new YouTubePlugin({
+        cookies: ytCookies
+    })]
 });
 
 // ── Eventos DisTube ──
@@ -81,7 +86,6 @@ client.once('ready', async () => {
     console.log('✅ Comandos registrados');
 });
 
-// ── Interacciones ──
 client.on('interactionCreate', async (interaction) => {
     if (!interaction.isChatInputCommand()) return;
     const { commandName, guild, member, channel } = interaction;
@@ -96,10 +100,7 @@ client.on('interactionCreate', async (interaction) => {
         await interaction.deferReply();
 
         try {
-            await distube.play(voiceChannel, query, {
-                member,
-                textChannel: channel
-            });
+            await distube.play(voiceChannel, query, { member, textChannel: channel });
             await interaction.editReply('🎵 ¡Procesando!');
         } catch (e) {
             console.error('Error en /play:', e);
