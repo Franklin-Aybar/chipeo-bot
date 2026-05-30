@@ -1,147 +1,229 @@
-const { Client, GatewayIntentBits, REST, Routes, EmbedBuilder } = require('discord.js');
-const { Connectors, Shoukaku } = require('shoukaku');
-const { Kazagumo } = require('kazagumo');
-const express = require('express');
-const app = express();
+const {
+    Client,
+    GatewayIntentBits,
+    EmbedBuilder,
+    REST,
+    Routes
+} = require('discord.js');
 
-const LOGO_BOT = "https://raw.githubusercontent.com/Franklin-Aybar/chipeo-bot/main/Chipeo_The_Project_Mesa_de_trabajo_1_Mesa_de_trabajo_1_Mesa_de_trabajo_1_Mesa_de_trabajo_1.png";
+const {
+    joinVoiceChannel,
+    createAudioPlayer,
+    createAudioResource,
+    AudioPlayerStatus,
+    VoiceConnectionStatus,
+    getVoiceConnection
+} = require('@discordjs/voice');
 
-// --- SERVIDOR WEB PARA MANTENERLO ACTIVO EN RENDER ---
-app.get('/', (req, res) => { 
-    res.send(`
-        <!DOCTYPE html>
-        <html lang="es">
-        <head>
-            <meta charset="UTF-8">
-            <title>BOT-LA-L | Web Oficial</title>
-            <style>
-                body { background-color: #06060c; color: #ffffff; font-family: sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
-                .container { background-color: #11111b; border: 2px solid #00ffcc; border-radius: 20px; padding: 40px; text-align: center; box-shadow: 0 0 30px #00ffcc; max-width: 600px; width: 90%; }
-                h1 { color: #00ffcc; margin: 0; text-transform: uppercase; }
-                .subtitle { color: #ff007f; font-weight: bold; margin-bottom: 20px; }
-                .status { background-color: #161622; padding: 15px; border-radius: 8px; font-weight: bold; color: #00ffcc; }
-                .footer { margin-top: 30px; font-size: 12px; color: #555577; }
-                .footer span { color: #00ffcc; font-weight: bold; }
-            </style>
-        </head>
-        <body>
-            <div class="container">
-                <h1>🔊 BOT-LA-L 🔊</h1>
-                <div class="subtitle">Chipeo The Project Bot</div>
-                <div class="status">STATUS: ONLINE EN LA CALLE</div>
-                <p>Mantenimiento de sistemas de sonido ready las 24 horas.</p>
-                <div class="footer">Desarrollado por <span>Los Reales Game de Computadora</span></div>
-            </div>
-        </body>
-        </html>
-    `); 
-});
-app.listen(process.env.PORT || 3000);
+const play = require('play-dl');
+
+const TOKEN     = process.env.TOKEN;
+const CLIENT_ID = process.env.CLIENT_ID;
 
 const client = new Client({
-    intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.GuildVoiceStates]
+    intents: [
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildVoiceStates,
+        GatewayIntentBits.GuildMessages
+    ]
 });
 
-const Nodes = [
-    { name: 'Node-Principal', url: 'lavalink.asandis.my.id:80', auth: 'youshallnotpass', secure: false },
-    { name: 'Node-Respaldo', url: 'lavalink.juice-mizuki.my.id:80', auth: 'youshallnotpass', secure: false }
-];
+// Cola por servidor
+const servers = new Map();
 
-// --- INICIALIZACIÓN CORREGIDA ---
-const shoukaku = new Shoukaku(new Connectors.DiscordJS(client), Nodes, { 
-    moveOnDisconnect: true,
-    resume: true 
-});
+function getServer(guildId) {
+    if (!servers.has(guildId)) {
+        servers.set(guildId, { queue: [], player: null, connection: null, current: null });
+    }
+    return servers.get(guildId);
+}
 
-const kazagumo = new Kazagumo({
-    defaultSearchEngine: 'youtube'
-}, shoukaku);
-// --- FIN DE INICIALIZACIÓN ---
+async function playNext(guildId, textChannel) {
+    const server = getServer(guildId);
+    if (server.queue.length === 0) {
+        server.current = null;
+        textChannel.send('✅ La cola terminó.');
+        return;
+    }
+
+    const track = server.queue.shift();
+    server.current = track;
+
+    try {
+        const stream = await play.stream(track.url, { quality: 2 });
+        const resource = createAudioResource(stream.stream, { inputType: stream.type });
+        server.player.play(resource);
+
+        const embed = new EmbedBuilder()
+            .setColor('#5865F2')
+            .setTitle('▶️ Sonando ahora')
+            .setDescription(`**[${track.title}](${track.url})**`)
+            .addFields(
+                { name: '⏱ Duración', value: track.duration, inline: true },
+                { name: '👤 Pedido por', value: track.requester, inline: true }
+            );
+
+        textChannel.send({ embeds: [embed] });
+    } catch (e) {
+        console.error('Error reproduciendo:', e);
+        textChannel.send('❌ Error en esa canción, saltando...');
+        playNext(guildId, textChannel);
+    }
+}
 
 const commands = [
-    { name: 'ping', description: 'Prueba si el sistema de sonido está ready' },
-    { name: 'say', description: 'Manda un mensaje', options: [{ name: 'mensaje', type: 3, description: 'Texto a decir', required: true }] },
-    { name: 'redes', description: 'Redes oficiales' },
-    { name: 'play', description: 'Reproduce música', options: [{ name: 'cancion', type: 3, description: 'Nombre o link', required: true }] },
-    { name: 'skip', description: 'Salta la canción' },
-    { name: 'stop', description: 'Saca al bot del canal' }
+    {
+        name: 'play',
+        description: '🎵 Reproduce una canción de YouTube',
+        options: [{ name: 'cancion', type: 3, description: 'Nombre o URL', required: true }]
+    },
+    { name: 'skip',   description: '⏭ Salta la canción actual' },
+    { name: 'stop',   description: '⏹ Para y limpia la cola' },
+    { name: 'pause',  description: '⏸ Pausa la música' },
+    { name: 'resume', description: '▶️ Reanuda la música' },
+    { name: 'queue',  description: '📋 Ver la cola' },
+    { name: 'np',     description: '🎶 Canción actual' },
+    { name: 'ping',   description: '🏓 Latencia del bot' }
 ];
 
-client.on('ready', async () => {
-    console.log(`✅ ¡BOT-LA-L iniciado por Los Reales Game de Computadora!`);
-    client.user.setActivity('Chipeo The Project 🔊', { type: 3 }); 
-    try {
-        const rest = new REST({ version: '10' }).setToken(process.env.TOKEN);
-        await rest.put(Routes.applicationCommands(client.user.id), { body: commands });
-    } catch (error) { console.error(error); }
+client.once('ready', async () => {
+    console.log(`✅ Listo como ${client.user.tag}`);
+    client.user.setActivity('música 🎵', { type: 2 });
+
+    const rest = new REST({ version: '10' }).setToken(TOKEN);
+    await rest.put(Routes.applicationCommands(CLIENT_ID), { body: commands });
+    console.log('✅ Comandos registrados');
 });
 
 client.on('interactionCreate', async (interaction) => {
     if (!interaction.isChatInputCommand()) return;
-    const { commandName } = interaction;
+    const { commandName, guild, member, channel } = interaction;
 
-    if (commandName === 'ping') return interaction.reply('🎛️ ¡El sistema de sonido está activo y nítido! 🔊🔥');
-
-    if (commandName === 'say') {
-        const msg = interaction.options.getString('mensaje');
-        await interaction.reply({ content: 'Soltando pauta...', ephemeral: true });
-        await interaction.deleteReply();
-        return interaction.channel.send(msg);
+    if (commandName === 'ping') {
+        return interaction.reply(`🏓 Pong! \`${client.ws.ping}ms\``);
     }
-
-    if (commandName === 'redes') {
-        const embed = new EmbedBuilder()
-            .setColor('#a855f7') 
-            .setTitle('🔊 CHIPEO THE PROJECT - OFICIAL 🔊')
-            .setThumbnail(LOGO_BOT)
-            .addFields(
-                { name: '🔥 Nuestro TikTok', value: '[Dale clic aquí para seguirnos](https://www.tiktok.com/)', inline: false },
-                { name: '👑 Empresa', value: 'Desarrollado para **Los Reales Game de Computadora**.', inline: false }
-            );
-        return interaction.reply({ embeds: [embed] });
-    }
-
-    const player = kazagumo.players.get(interaction.guild.id);
 
     if (commandName === 'play') {
-        const canalVoz = interaction.member.voice.channel;
-        if (!canalVoz) return interaction.reply({ content: '⚠️ ¡Métete a un canal de voz primero, bro!', ephemeral: true });
+        const voiceChannel = member?.voice?.channel;
+        if (!voiceChannel) return interaction.reply({ content: '⚠️ Entra a un canal de voz primero.', ephemeral: true });
 
+        await interaction.deferReply();
         const query = interaction.options.getString('cancion');
-        await interaction.reply({ content: `🔍 Buscando \`${query}\`...` });
+        const server = getServer(guild.id);
 
-        try {
-            const voicePlayer = await kazagumo.createPlayer({
-                guildId: interaction.guild.id,
-                textId: interaction.channel.id,
-                voiceId: canalVoz.id,
-                deaf: true
+        if (!server.connection || server.connection.state.status === VoiceConnectionStatus.Destroyed) {
+            server.connection = joinVoiceChannel({
+                channelId: voiceChannel.id,
+                guildId: guild.id,
+                adapterCreator: guild.voiceAdapterCreator,
+                selfDeaf: true
             });
 
-            const result = await kazagumo.search(query, { requester: interaction.user });
-            if (!result || !result.tracks || !result.tracks.length) return interaction.editReply('❌ No encontré pistas.');
+            server.player = createAudioPlayer();
+            server.connection.subscribe(server.player);
 
-            voicePlayer.queue.add(result.tracks[0]);
-            if (!voicePlayer.playing && !voicePlayer.paused) voicePlayer.play();
+            server.player.on(AudioPlayerStatus.Idle, () => playNext(guild.id, channel));
+            server.player.on('error', (e) => { console.error(e); playNext(guild.id, channel); });
+        }
 
-            const embedPlay = new EmbedBuilder()
-                .setColor('#00ffcc')
-                .setTitle('🎶 TRACK AGREGADO AL MURO DE SONIDO 🔊')
-                .setDescription(`**[${result.tracks[0].title}](${result.tracks[0].uri})**`)
-                .setThumbnail(LOGO_BOT)
-                .setFooter({ text: 'Los Reales Game de Computadora' });
+        try {
+            let trackUrl, trackTitle, trackDuration;
 
-            return interaction.editReply({ content: ' ', embeds: [embedPlay] });
+            if (play.yt_validate(query) === 'video') {
+                const info = await play.video_info(query);
+                trackUrl      = query;
+                trackTitle    = info.video_details.title;
+                trackDuration = info.video_details.durationRaw;
+            } else {
+                const results = await play.search(query, { limit: 1 });
+                if (!results.length) return interaction.editReply('❌ No encontré esa canción.');
+                trackUrl      = results[0].url;
+                trackTitle    = results[0].title;
+                trackDuration = results[0].durationRaw;
+            }
+
+            const track = { url: trackUrl, title: trackTitle, duration: trackDuration || '??:??', requester: interaction.user.username };
+            server.queue.push(track);
+
+            if (server.player.state.status === AudioPlayerStatus.Idle) {
+                playNext(guild.id, channel);
+                await interaction.editReply('🎵 ¡Reproduciendo!');
+            } else {
+                const embed = new EmbedBuilder()
+                    .setColor('#5865F2')
+                    .setTitle('📋 Agregado a la cola')
+                    .setDescription(`**[${track.title}](${track.url})**`)
+                    .addFields(
+                        { name: '⏱ Duración', value: track.duration, inline: true },
+                        { name: '📍 Posición', value: `#${server.queue.length}`, inline: true }
+                    );
+                await interaction.editReply({ embeds: [embed] });
+            }
         } catch (e) {
-            console.error(e); // Ver el error específico en logs de Render
-            return interaction.editReply('⚠️ Error al conectar al nodo de audio. Intenta de nuevo.');
+            console.error('Error en /play:', e);
+            await interaction.editReply('❌ Error buscando esa canción.');
         }
     }
 
-    if (!player && ['skip', 'stop'].includes(commandName)) return interaction.reply({ content: '❌ No hay música sonando.', ephemeral: true });
+    if (commandName === 'skip') {
+        const server = getServer(guild.id);
+        if (!server.player) return interaction.reply({ content: '❌ No hay música.', ephemeral: true });
+        server.player.stop();
+        return interaction.reply('⏭ ¡Saltado!');
+    }
 
-    if (commandName === 'skip') { player.skip(); return interaction.reply('⏭️ ¡Track saltado!'); }
-    if (commandName === 'stop') { player.destroy(); return interaction.reply('🔇 ¡Muro apagado!'); }
+    if (commandName === 'stop') {
+        const server = getServer(guild.id);
+        if (!server.connection) return interaction.reply({ content: '❌ No estoy en un canal.', ephemeral: true });
+        server.queue = [];
+        server.current = null;
+        server.connection.destroy();
+        servers.delete(guild.id);
+        return interaction.reply('⏹ ¡Parado y cola limpiada!');
+    }
+
+    if (commandName === 'pause') {
+        const server = getServer(guild.id);
+        if (!server.player) return interaction.reply({ content: '❌ No hay música.', ephemeral: true });
+        server.player.pause();
+        return interaction.reply('⏸ ¡Pausado!');
+    }
+
+    if (commandName === 'resume') {
+        const server = getServer(guild.id);
+        if (!server.player) return interaction.reply({ content: '❌ No hay música.', ephemeral: true });
+        server.player.unpause();
+        return interaction.reply('▶️ ¡Reanudado!');
+    }
+
+    if (commandName === 'queue') {
+        const server = getServer(guild.id);
+        if (!server.current && server.queue.length === 0) return interaction.reply({ content: '📋 La cola está vacía.', ephemeral: true });
+
+        let desc = '';
+        if (server.current) desc += `▶️ **Sonando:** [${server.current.title}](${server.current.url})\n\n`;
+        if (server.queue.length > 0) {
+            desc += server.queue.slice(0, 10).map((t, i) => `\`${i + 1}.\` [${t.title}](${t.url}) — ${t.duration}`).join('\n');
+            if (server.queue.length > 10) desc += `\n... y ${server.queue.length - 10} más`;
+        }
+
+        return interaction.reply({ embeds: [new EmbedBuilder().setColor('#5865F2').setTitle('📋 Cola').setDescription(desc)] });
+    }
+
+    if (commandName === 'np') {
+        const server = getServer(guild.id);
+        if (!server.current) return interaction.reply({ content: '❌ No hay nada sonando.', ephemeral: true });
+
+        return interaction.reply({ embeds: [new EmbedBuilder()
+            .setColor('#5865F2')
+            .setTitle('🎶 Sonando ahora')
+            .setDescription(`**[${server.current.title}](${server.current.url})**`)
+            .addFields(
+                { name: '⏱ Duración', value: server.current.duration, inline: true },
+                { name: '👤 Pedido por', value: server.current.requester, inline: true }
+            )
+        ]});
+    }
 });
 
-client.login(process.env.TOKEN);
+client.login(TOKEN);
