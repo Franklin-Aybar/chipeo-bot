@@ -1,7 +1,6 @@
 {
-  "name": "bot",
+  "name": "ciphero",
   "version": "1.0.0",
-  "description": "Bot de música y administración",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
@@ -13,6 +12,7 @@
     "@distube/youtube": "^1.0.2",
     "discord.js": "^14.21.0",
     "distube": "^5.0.3",
-    "express": "^5.1.0"
+    "express": "^5.1.0",
+    "ffmpeg-static": "^5.2.0"
   }
 }
