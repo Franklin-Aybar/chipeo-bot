@@ -9,11 +9,11 @@
     "discord.js": "^14.14.1",
     "express": "^4.18.2",
     "kazagumo": "^3.0.4",
-    "shoukaku": "^4.0.1"
+    "shoukaku": "3.4.1"
   },
   "engines": {
     "node": ">=16.9.0"
   },
-  "author": "Team Táctico",
+  "author": "tacticos",
   "license": "ISC"
 }
