@@ -98,8 +98,7 @@ client.on('interactionCreate', async (interaction) => {
         try {
             await distube.play(voiceChannel, query, {
                 member,
-                textChannel: channel,
-                message: interaction
+                textChannel: channel
             });
             await interaction.editReply('🎵 ¡Procesando!');
         } catch (e) {
