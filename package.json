@@ -1,7 +1,6 @@
 {
   "name": "chipeo-the-project-bot",
   "version": "1.0.0",
-  "description": "El bot oficial de Chipeo The Project desarrollado por el Team Táctico",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
