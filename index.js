@@ -4,7 +4,10 @@ const { Kazagumo } = require('kazagumo');
 const express = require('express');
 const app = express();
 
-// LA PÁGINA WEB EXACTA A TU CAPTURA (Brillo Neón y los créditos de tu empresa)
+// LINK DEL LOGO OFICIAL DE CHIPEO THE PROJECT PARA LOS EMBEDS
+const LOGO_BOT = "https://images-ext-1.discordapp.net/external/v3m_v5Xj8A8-0r7YhLz_6Zun5L_b7654321/https/raw.githubusercontent.com/Franklin-Aybar/chipeo-bot/main/Chipeo_The_Project_Mesa_de_trabajo_1_Mesa_de_trabajo_1_Mesa_de_trabajo_1_Mesa_de_trabajo_1.png";
+
+// LA PÁGINA WEB PERFECTA (Estilo BOT-LA-L y Los Reales Game de Computadora)
 app.get('/', (req, res) => { 
     res.send(`
         <!DOCTYPE html>
@@ -132,7 +135,7 @@ app.get('/', (req, res) => {
                 <div class="status-card">
                     <span class="status-label">Estado del Bot:</span>
                     <div class="status-value">
-                        <span class="status-text">ONLINE</span>
+                        <span class="status-text">ONLINE EN LA CALLE</span>
                         <div class="status-dot"></div>
                     </div>
                 </div>
@@ -161,16 +164,28 @@ const client = new Client({
     ]
 });
 
-// NODOS LAVALINK PÚBLICOS
-const Nodes = [{
-    name: 'ChipeoNode',
-    url: 'lava.link:80', 
-    auth: 'youshallnotpass',
-    secure: false
-}];
+// ⚡ NUEVOS NODOS LAVALINK PÚBLICOS DE RESPALDO (ACTIVOS)
+const Nodes = [
+    {
+        name: 'Node-Principal',
+        url: 'lavalink.asandis.my.id:80', // Servidor de alta velocidad
+        auth: 'youshallnotpass',
+        secure: false
+    },
+    {
+        name: 'Node-Respaldo',
+        url: 'lavalink.juice-mizuki.my.id:80', // Respaldo por si falla el primero
+        auth: 'youshallnotpass',
+        secure: false
+    }
+];
 
-// Arreglo del conector para evitar el error de "connector.set" de Shoukaku v4
-const shoukaku = new Shoukaku(new Connectors.DiscordJS(client), Nodes);
+const shoukaku = new Shoukaku(new Connectors.DiscordJS(client), Nodes, {
+    moveOnDisconnect: true, // Si un nodo se cae, se mueve al otro automáticamente
+    reconnectTries: 5,
+    restTimeout: 15000
+});
+
 const kazagumo = new Kazagumo({
     plugins: [],
     defaultSearchEngine: 'youtube'
@@ -198,7 +213,7 @@ const commands = [
 ];
 
 client.on('ready', async () => {
-    console.log(`✅ ¡Chipeo The Project Bot activo con sistema completo de música!`);
+    console.log(`✅ ¡BOT-LA-L levantado con éxito por Los Reales Game de Computadora!`);
     client.user.setActivity('Chipeo The Project 🔊', { type: 3 }); 
     try {
         const rest = new REST({ version: '10' }).setToken(process.env.TOKEN);
@@ -206,7 +221,11 @@ client.on('ready', async () => {
     } catch (error) { console.error(error); }
 });
 
-// Manejador de interacciones para comandos
+// CAPTURAR ERRORES EN LOS NODOS PARA QUE NO SE REVIENTE EL BOT
+shoukaku.on('error', (name, error) => {
+    console.log(`⚠️ Alerta en nodo [${name}]: Servidor ocupado o reconectando.`);
+});
+
 client.on('interactionCreate', async (interaction) => {
     if (!interaction.isChatInputCommand()) return;
     const { commandName } = interaction;
@@ -225,6 +244,7 @@ client.on('interactionCreate', async (interaction) => {
             .setColor('#a855f7') 
             .setTitle('🔊 CHIPEO THE PROJECT - OFICIAL 🔊')
             .setDescription('¡Sigue la vuelta y actívate con el coro!')
+            .setThumbnail(LOGO_BOT)
             .addFields(
                 { name: '🔥 Nuestro TikTok', value: '[¡Dale clic aquí para seguirnos!](https://www.tiktok.com/)', inline: false },
                 { name: '👑 Creadores', value: 'Desarrollado por el **Team Táctico**.', inline: false }
@@ -234,12 +254,13 @@ client.on('interactionCreate', async (interaction) => {
 
     const player = kazagumo.players.get(interaction.guild.id);
 
+    // COMANDO /PLAY MEJORADO CON FILTRO CONTRA CAÍDAS
     if (commandName === 'play') {
         const canalVoz = interaction.member.voice.channel;
         if (!canalVoz) return interaction.reply({ content: '⚠️ ¡Métete a un canal de voz primero, bro!', ephemeral: true });
 
         const query = interaction.options.getString('cancion');
-        await interaction.reply({ content: `🔍 Buscando \`${query}\` al estilo Jockey...` });
+        await interaction.reply({ content: `🔍 Buscando \`${query}\` en las frecuencias de audio...` });
 
         try {
             const voicePlayer = await kazagumo.createPlayer({
@@ -250,21 +271,26 @@ client.on('interactionCreate', async (interaction) => {
             });
 
             const result = await kazagumo.search(query, { requester: interaction.user });
-            if (!result.tracks.length) return interaction.editReply('❌ No encontré música con ese nombre.');
+            
+            if (!result || !result.tracks || !result.tracks.length) {
+                return interaction.editReply('❌ No encontré ninguna pista musical con ese nombre. Prueba con otra palabra clave.');
+            }
 
             voicePlayer.queue.add(result.tracks[0]);
             if (!voicePlayer.playing && !voicePlayer.paused) voicePlayer.play();
 
             const embedPlay = new EmbedBuilder()
                 .setColor('#00ffcc')
-                .setTitle('🎶 AGREGADA A LA LISTA 🔊')
+                .setTitle('🎶 PISTA AGREGADA AL MURO DE SONIDO 🔊')
                 .setDescription(`**[${result.tracks[0].title}](${result.tracks[0].uri})**`)
-                .setThumbnail(result.tracks[0].thumbnail || null)
-                .setFooter({ text: 'Chipeo The Project • Sistema de Música' });
+                .setThumbnail(LOGO_BOT)
+                .setFooter({ text: 'Chipeo The Project • Los Reales Game de Computadora' });
 
             return interaction.editReply({ content: ' ', embeds: [embedPlay] });
+
         } catch (e) {
-            return interaction.editReply('❌ Error conectando al servidor de audio.');
+            console.error(e);
+            return interaction.editReply('⚠️ **El sistema de audio está reiniciando sus frecuencias.** Por favor, espera 10 segundos e intenta poner la canción otra vez, que los servidores públicos se saturan a veces.');
         }
     }
 
@@ -276,27 +302,28 @@ client.on('interactionCreate', async (interaction) => {
 
     if (commandName === 'skip') {
         player.skip();
-        return interaction.reply('⏭️ ¡Canción saltada!');
+        return interaction.reply('⏭️ ¡Canción saltada! Pasando al siguiente track.');
     }
 
     if (commandName === 'pause') {
-        if (player.paused) return interaction.reply({ content: '⚠️ Ya está pausado.', ephemeral: true });
+        if (player.paused) return interaction.reply({ content: '⚠️ Las plantas ya están en pausa.', ephemeral: true });
         player.pause(true);
-        return interaction.reply('⏸️ Música pausada.');
+        return interaction.reply('⏸️ Sonido pausado.');
     }
 
     if (commandName === 'resume') {
-        if (!player.paused) return interaction.reply({ content: '⚠️ Ya está sonando.', ephemeral: true });
+        if (!player.paused) return interaction.reply({ content: '⚠️ El sonido ya está activo.', ephemeral: true });
         player.pause(false);
-        return interaction.reply('▶️ ¡Sigue la música!');
+        return interaction.reply('▶️ ¡Sigue el chipeo activo! Que retumben los bajos.');
     }
 
     if (commandName === 'queue') {
         const lista = player.queue.map((track, index) => `**${index + 1}.** ${track.title}`).join('\n');
         const embedQueue = new EmbedBuilder()
             .setColor('#a855f7')
-            .setTitle('📋 LISTA DE ESPERA')
-            .setDescription(lista || 'No hay más canciones en cola.');
+            .setTitle('📋 LISTA DE TEMAS EN ESPERA')
+            .setThumbnail(LOGO_BOT)
+            .setDescription(lista || 'No hay más música en la cola. Pon tracks usando `/play`.');
         return interaction.reply({ embeds: [embedQueue] });
     }
 
@@ -305,15 +332,16 @@ client.on('interactionCreate', async (interaction) => {
         if (!track) return interaction.reply('No hay nada sonando.');
         const embedNp = new EmbedBuilder()
             .setColor('#00ffcc')
-            .setTitle('🔊 ESCUCHANDO AHORA 🔊')
+            .setTitle('🔊 TRACK SONANDO EN VIVO 🔊')
             .setDescription(`**[${track.title}](${track.uri})**`)
-            .setThumbnail(track.thumbnail || null);
+            .setThumbnail(LOGO_BOT)
+            .addFields({ name: '👤 Pedida por', value: `${track.requester}`, inline: true });
         return interaction.reply({ embeds: [embedNp] });
     }
 
     if (commandName === 'stop') {
         player.destroy();
-        return interaction.reply('🔇 ¡Sistema apagado por completo!');
+        return interaction.reply('🔇 ¡Muro de sonido apagado! Cola limpia y bot fuera del canal.');
     }
 });
 
