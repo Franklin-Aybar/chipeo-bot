@@ -99,7 +99,7 @@ app.get('/', (req, res) => {
                 </div>
 
                 <p style="color: #a3a3c2; line-height: 1.6; font-size: 16px;">
-                    Controlando la comunidad oficial de los musicólogos. El sistema está encendido las 24 horas rompiendo los bajos y activo para tirar las pautas por Discord.
+                    Controlando la comunidad oficial 24/7.
                 </p>
 
                 <div class="footer">
