@@ -56,9 +56,9 @@ distube.on('finish', queue => {
     queue.textChannel?.send('✅ La cola terminó.');
 });
 
-distube.on('error', (channel, error) => {
+distube.on('error', (error, queue) => {
     console.error('DisTube error:', error);
-    channel?.send('❌ Error reproduciendo esa canción.');
+    queue?.textChannel?.send('❌ Error reproduciendo esa canción.');
 });
 
 // ── Comandos ──
