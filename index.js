@@ -4,10 +4,10 @@ const { Kazagumo } = require('kazagumo');
 const express = require('express');
 const app = express();
 
-// LINK DEL LOGO OFICIAL DE CHIPEO THE PROJECT PARA LOS EMBEDS
-const LOGO_BOT = "https://images-ext-1.discordapp.net/external/v3m_v5Xj8A8-0r7YhLz_6Zun5L_b7654321/https/raw.githubusercontent.com/Franklin-Aybar/chipeo-bot/main/Chipeo_The_Project_Mesa_de_trabajo_1_Mesa_de_trabajo_1_Mesa_de_trabajo_1_Mesa_de_trabajo_1.png";
+// URL DIRECTA DE TU LOGO OFICIAL
+const LOGO_BOT = "https://raw.githubusercontent.com/Franklin-Aybar/chipeo-bot/main/Chipeo_The_Project_Mesa_de_trabajo_1_Mesa_de_trabajo_1_Mesa_de_trabajo_1_Mesa_de_trabajo_1.png";
 
-// LA PÁGINA WEB PERFECTA (Estilo BOT-LA-L y Los Reales Game de Computadora)
+// LA PÁGINA WEB EXACTA A TU CAPTURA (Fondo oscuro, borde neón brillante y créditos)
 app.get('/', (req, res) => { 
     res.send(`
         <!DOCTYPE html>
@@ -15,10 +15,10 @@ app.get('/', (req, res) => {
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Chipeo The Project Bot | Web Oficial</title>
+            <title>BOT-LA-L | Panel Control</title>
             <style>
                 body {
-                    background-color: #050508;
+                    background-color: #06060c;
                     color: #ffffff;
                     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
                     margin: 0;
@@ -29,88 +29,89 @@ app.get('/', (req, res) => {
                     min-height: 100vh;
                 }
                 .container {
-                    background-color: #12121a;
+                    background-color: #11111b;
                     border: 2px solid #00ffcc;
                     border-radius: 20px;
                     padding: 40px;
                     text-align: center;
-                    box-shadow: 0 0 35px #00ffcc, inset 0 0 15px rgba(0, 255, 204, 0.1);
-                    max-width: 700px;
+                    box-shadow: 0 0 30px #00ffcc, inset 0 0 15px rgba(0, 255, 204, 0.1);
+                    max-width: 680px;
                     width: 90%;
                 }
                 .title-container {
                     display: flex;
                     align-items: center;
                     justify-content: center;
-                    gap: 15px;
-                    margin-bottom: 5px;
+                    gap: 12px;
+                    margin-bottom: 2px;
                 }
                 h1 {
                     color: #00ffcc;
-                    font-size: 36px;
+                    font-size: 38px;
                     margin: 0;
                     text-transform: uppercase;
                     letter-spacing: 2px;
-                    text-shadow: 0 0 10px rgba(0, 255, 204, 0.6);
                     font-weight: 800;
+                    text-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
                 }
                 .subtitle {
                     color: #ff007f;
-                    font-size: 18px;
+                    font-size: 16px;
                     font-weight: bold;
-                    margin-top: 5px;
-                    margin-bottom: 35px;
+                    margin-top: 2px;
+                    margin-bottom: 30px;
+                    letter-spacing: 0.5px;
                 }
                 .status-card {
-                    background-color: #171724;
+                    background-color: #161622;
                     border-left: 5px solid #00ffcc;
-                    padding: 18px 25px;
-                    border-radius: 10px;
+                    padding: 16px 22px;
+                    border-radius: 8px;
                     margin: 25px 0;
                     display: flex;
                     justify-content: space-between;
                     align-items: center;
                 }
                 .status-label {
-                    font-size: 20px;
+                    font-size: 19px;
                     font-weight: bold;
                     color: #ffffff;
                 }
                 .status-value {
                     display: flex;
                     align-items: center;
-                    gap: 12px;
+                    gap: 10px;
                 }
                 .status-text {
                     color: #00ffcc;
                     font-weight: bold;
-                    font-size: 18px;
+                    font-size: 16px;
                     letter-spacing: 1px;
                 }
                 .status-dot {
-                    width: 16px;
-                    height: 16px;
+                    width: 14px;
+                    height: 14px;
                     background-color: #00ffcc;
                     border-radius: 50%;
-                    box-shadow: 0 0 12px #00ffcc;
+                    box-shadow: 0 0 10px #00ffcc;
                     animation: pulse 1.5s infinite;
                 }
                 .description {
-                    color: #8f8fbc;
-                    line-height: 1.7;
-                    font-size: 16px;
+                    color: #8c8cbd;
+                    line-height: 1.6;
+                    font-size: 15px;
                     margin: 25px auto;
-                    max-width: 580px;
+                    max-width: 550px;
                 }
                 .divider {
                     border: none;
-                    border-top: 1px solid #1f1f30;
+                    border-top: 1px solid #1e1e2f;
                     margin-top: 30px;
                     margin-bottom: 20px;
                 }
                 .footer {
-                    font-size: 14px;
-                    color: #5c5c7d;
+                    font-size: 13px;
+                    color: #555577;
                 }
                 .footer span {
                     color: #00ffcc;
@@ -126,9 +127,9 @@ app.get('/', (req, res) => {
         <body>
             <div class="container">
                 <div class="title-container">
-                    <span style="font-size: 32px;">🔊</span>
+                    <span style="font-size: 28px;">🔊</span>
                     <h1>BOT-LA-L</h1>
-                    <span style="font-size: 32px;">🔊</span>
+                    <span style="font-size: 28px;">🔊</span>
                 </div>
                 <div class="subtitle">Chipeo The Project Bot</div>
                 
@@ -164,31 +165,37 @@ const client = new Client({
     ]
 });
 
-// ⚡ NUEVOS NODOS LAVALINK PÚBLICOS DE RESPALDO (ACTIVOS)
+// NODOS LAVALINK PÚBLICOS OPERATIVOS
 const Nodes = [
     {
-        name: 'Node-Principal',
-        url: 'lavalink.asandis.my.id:80', // Servidor de alta velocidad
+        name: 'Chipeo-Node-A',
+        url: 'lavalink.asandis.my.id:80',
         auth: 'youshallnotpass',
         secure: false
     },
     {
-        name: 'Node-Respaldo',
-        url: 'lavalink.juice-mizuki.my.id:80', // Respaldo por si falla el primero
+        name: 'Chipeo-Node-B',
+        url: 'lavalink.juice-mizuki.my.id:80',
         auth: 'youshallnotpass',
         secure: false
     }
 ];
 
+// INICIALIZACIÓN CONFIGURADA CORRECTAMENTE PARA EVITAR EL ERROR DE "connector.set"
 const shoukaku = new Shoukaku(new Connectors.DiscordJS(client), Nodes, {
-    moveOnDisconnect: true, // Si un nodo se cae, se mueve al otro automáticamente
+    moveOnDisconnect: true,
     reconnectTries: 5,
     restTimeout: 15000
 });
 
 const kazagumo = new Kazagumo({
     plugins: [],
-    defaultSearchEngine: 'youtube'
+    defaultSearchEngine: 'youtube',
+    // Pasamos las funciones directamente para prevenir conflictos de librerías
+    send: (id, payload) => {
+        const guild = client.guilds.cache.get(id);
+        if (guild) guild.shard.send(payload);
+    }
 }, shoukaku);
 
 const commands = [
@@ -213,7 +220,7 @@ const commands = [
 ];
 
 client.on('ready', async () => {
-    console.log(`✅ ¡BOT-LA-L levantado con éxito por Los Reales Game de Computadora!`);
+    console.log(`✅ ¡BOT-LA-L iniciado correctamente por Los Reales Game de Computadora!`);
     client.user.setActivity('Chipeo The Project 🔊', { type: 3 }); 
     try {
         const rest = new REST({ version: '10' }).setToken(process.env.TOKEN);
@@ -221,9 +228,9 @@ client.on('ready', async () => {
     } catch (error) { console.error(error); }
 });
 
-// CAPTURAR ERRORES EN LOS NODOS PARA QUE NO SE REVIENTE EL BOT
+// Evitar crasheos en la consola si el servidor Lavalink parpadea
 shoukaku.on('error', (name, error) => {
-    console.log(`⚠️ Alerta en nodo [${name}]: Servidor ocupado o reconectando.`);
+    console.log(`⚠️ Nodo [${name}] ocupado o reconectando en segundo plano.`);
 });
 
 client.on('interactionCreate', async (interaction) => {
@@ -247,14 +254,13 @@ client.on('interactionCreate', async (interaction) => {
             .setThumbnail(LOGO_BOT)
             .addFields(
                 { name: '🔥 Nuestro TikTok', value: '[¡Dale clic aquí para seguirnos!](https://www.tiktok.com/)', inline: false },
-                { name: '👑 Creadores', value: 'Desarrollado por el **Team Táctico**.', inline: false }
+                { name: '👑 Empresa', value: 'Desarrollado para **Los Reales Game de Computadora**.', inline: false }
             );
         return interaction.reply({ embeds: [embed] });
     }
 
     const player = kazagumo.players.get(interaction.guild.id);
 
-    // COMANDO /PLAY MEJORADO CON FILTRO CONTRA CAÍDAS
     if (commandName === 'play') {
         const canalVoz = interaction.member.voice.channel;
         if (!canalVoz) return interaction.reply({ content: '⚠️ ¡Métete a un canal de voz primero, bro!', ephemeral: true });
@@ -273,7 +279,7 @@ client.on('interactionCreate', async (interaction) => {
             const result = await kazagumo.search(query, { requester: interaction.user });
             
             if (!result || !result.tracks || !result.tracks.length) {
-                return interaction.editReply('❌ No encontré ninguna pista musical con ese nombre. Prueba con otra palabra clave.');
+                return interaction.editReply('❌ No encontré ninguna pista con ese nombre. Cambia las palabras clave.');
             }
 
             voicePlayer.queue.add(result.tracks[0]);
@@ -281,7 +287,7 @@ client.on('interactionCreate', async (interaction) => {
 
             const embedPlay = new EmbedBuilder()
                 .setColor('#00ffcc')
-                .setTitle('🎶 PISTA AGREGADA AL MURO DE SONIDO 🔊')
+                .setTitle('🎶 TRACK AGREGADO AL MURO DE SONIDO 🔊')
                 .setDescription(`**[${result.tracks[0].title}](${result.tracks[0].uri})**`)
                 .setThumbnail(LOGO_BOT)
                 .setFooter({ text: 'Chipeo The Project • Los Reales Game de Computadora' });
@@ -289,8 +295,7 @@ client.on('interactionCreate', async (interaction) => {
             return interaction.editReply({ content: ' ', embeds: [embedPlay] });
 
         } catch (e) {
-            console.error(e);
-            return interaction.editReply('⚠️ **El sistema de audio está reiniciando sus frecuencias.** Por favor, espera 10 segundos e intenta poner la canción otra vez, que los servidores públicos se saturan a veces.');
+            return interaction.editReply('⚠️ **El sistema de audio está sincronizando las frecuencias.** Espera 10 segundos y vuelve a usar el comando, por favor.');
         }
     }
 
@@ -302,11 +307,11 @@ client.on('interactionCreate', async (interaction) => {
 
     if (commandName === 'skip') {
         player.skip();
-        return interaction.reply('⏭️ ¡Canción saltada! Pasando al siguiente track.');
+        return interaction.reply('⏭️ ¡Track saltado!');
     }
 
     if (commandName === 'pause') {
-        if (player.paused) return interaction.reply({ content: '⚠️ Las plantas ya están en pausa.', ephemeral: true });
+        if (player.paused) return interaction.reply({ content: '⚠️ Ya está en pausa.', ephemeral: true });
         player.pause(true);
         return interaction.reply('⏸️ Sonido pausado.');
     }
@@ -314,34 +319,34 @@ client.on('interactionCreate', async (interaction) => {
     if (commandName === 'resume') {
         if (!player.paused) return interaction.reply({ content: '⚠️ El sonido ya está activo.', ephemeral: true });
         player.pause(false);
-        return interaction.reply('▶️ ¡Sigue el chipeo activo! Que retumben los bajos.');
+        return interaction.reply('▶️ ¡Sigue el chipeo activo! Bajos encendidos.');
     }
 
     if (commandName === 'queue') {
         const lista = player.queue.map((track, index) => `**${index + 1}.** ${track.title}`).join('\n');
         const embedQueue = new EmbedBuilder()
             .setColor('#a855f7')
-            .setTitle('📋 LISTA DE TEMAS EN ESPERA')
+            .setTitle('📋 TEMAS EN FILA')
             .setThumbnail(LOGO_BOT)
-            .setDescription(lista || 'No hay más música en la cola. Pon tracks usando `/play`.');
+            .setDescription(lista || 'No hay más canciones en espera.');
         return interaction.reply({ embeds: [embedQueue] });
     }
 
     if (commandName === 'nowplaying') {
         const track = player.queue.current;
-        if (!track) return interaction.reply('No hay nada sonando.');
+        if (!track) return interaction.reply('No hay nada reproduciéndose.');
         const embedNp = new EmbedBuilder()
             .setColor('#00ffcc')
-            .setTitle('🔊 TRACK SONANDO EN VIVO 🔊')
+            .setTitle('🔊 ESCUCHANDO EN VIVO 🔊')
             .setDescription(`**[${track.title}](${track.uri})**`)
             .setThumbnail(LOGO_BOT)
-            .addFields({ name: '👤 Pedida por', value: `${track.requester}`, inline: true });
+            .addFields({ name: '👤 Pedido por', value: `${track.requester}`, inline: true });
         return interaction.reply({ embeds: [embedNp] });
     }
 
     if (commandName === 'stop') {
         player.destroy();
-        return interaction.reply('🔇 ¡Muro de sonido apagado! Cola limpia y bot fuera del canal.');
+        return interaction.reply('🔇 ¡Muro apagado! Cola vacía y bot desconectado.');
     }
 });
 
