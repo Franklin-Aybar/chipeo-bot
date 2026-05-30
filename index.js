@@ -2,7 +2,7 @@ const { Client, GatewayIntentBits, REST, Routes, EmbedBuilder } = require('disco
 const express = require('express');
 const app = express();
 
-// LA PÁGINA WEB REAL (Con el flow del Team Táctico)
+// LA PÁGINA WEB REAL (Actualizada solo con ONLINE)
 app.get('/', (req, res) => { 
     res.send(`
         <!DOCTYPE html>
@@ -93,7 +93,7 @@ app.get('/', (req, res) => {
                 <div class="status-card">
                     <span style="font-size: 18px; font-weight: bold;">Estado del Bot:</span>
                     <div style="display: flex; align-items: center; gap: 10px;">
-                        <span style="color: #00ffcc; font-weight: bold;">ONLINE EN LA CALLE</span>
+                        <span style="color: #00ffcc; font-weight: bold;">ONLINE</span>
                         <div class="status-dot"></div>
                     </div>
                 </div>
@@ -119,7 +119,7 @@ const client = new Client({
     ]
 });
 
-// Comandos Slash (/) actualizados
+// Comandos Slash (/)
 const commands = [
     { name: 'ping', description: 'Prueba si el sistema de sonido del bot está ready' },
     {
@@ -131,7 +131,7 @@ const commands = [
 ];
 
 client.on('ready', async () => {
-    console.log(`✅ ¡Chipeo The Project Bot activo en la calle!`);
+    console.log(`✅ ¡Chipeo The Project Bot activo!`);
     client.user.setActivity('Chipeo The Project 🔊', { type: 3 }); 
     try {
         const rest = new REST({ version: '10' }).setToken(process.env.TOKEN);
@@ -156,7 +156,7 @@ client.on('interactionCreate', async (interaction) => {
     }
     if (commandName === 'redes') {
         const embedRedes = new EmbedBuilder()
-            .setColor('#a855f7') // Color morado como el logo duro
+            .setColor('#a855f7') 
             .setTitle('🔊 CHIPEO THE PROJECT - OFICIAL 🔊')
             .setDescription('Dándole el verdadero apoyo al movimiento. ¡Sigue la vuelta y actívate con el coro!')
             .addFields(
