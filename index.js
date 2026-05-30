@@ -21,15 +21,11 @@ const client = new Client({
 });
 
 // ── Cookies de YouTube (desde variable de entorno) ──
-const ytCookies = process.env.YT_COOKIES || '';
-
-// ── DisTube con cookies ──
 const distube = new DisTube(client, {
-    plugins: [new YouTubePlugin({
-        cookies: ytCookies
-    })]
+    plugins: [
+        new YouTubePlugin()
+    ]
 });
-
 // ── Eventos DisTube ──
 distube.on('playSong', (queue, song) => {
     queue.textChannel?.send({ embeds: [
