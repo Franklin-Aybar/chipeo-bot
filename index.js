@@ -2,7 +2,7 @@ const { Client, GatewayIntentBits, REST, Routes, EmbedBuilder } = require('disco
 const express = require('express');
 const app = express();
 
-// INTERFAZ DE LA PÁGINA WEB (Dashboard Visual con Flow Tuning)
+// LA PÁGINA WEB REAL (Con el flow del Team Táctico)
 app.get('/', (req, res) => { 
     res.send(`
         <!DOCTYPE html>
@@ -10,7 +10,7 @@ app.get('/', (req, res) => {
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Bot-la-L | Dashboard Oficial</title>
+            <title>Chipeo The Project Bot | Web Oficial</title>
             <style>
                 body {
                     background-color: #0b0b0f;
@@ -26,29 +26,28 @@ app.get('/', (req, res) => {
                 }
                 .container {
                     background: linear-gradient(145deg, #12121a, #1a1a26);
-                    border: 2px solid #00ffcc;
+                    border: 2px solid #a855f7;
                     border-radius: 20px;
                     padding: 40px;
                     text-align: center;
-                    box-shadow: 0 0 30px #00ffcc, inset 0 0 15px rgba(0, 255, 204, 0.2);
+                    box-shadow: 0 0 30px #a855f7, inset 0 0 15px rgba(168, 85, 247, 0.2);
                     max-width: 600px;
                     width: 90%;
                 }
                 h1 {
-                    color: #00ffcc;
-                    font-size: 32px;
+                    color: #ffffff;
+                    font-size: 28px;
                     margin-bottom: 5px;
                     text-transform: uppercase;
                     letter-spacing: 2px;
-                    text-shadow: 0 0 10px #00ffcc;
+                    text-shadow: 0 0 10px #a855f7;
                 }
                 .subtitle {
-                    color: #ff007f;
-                    font-size: 18px;
+                    color: #a855f7;
+                    font-size: 20px;
                     font-weight: bold;
                     margin-top: 0;
                     margin-bottom: 30px;
-                    text-shadow: 0 0 10px #ff007f;
                 }
                 .status-card {
                     background-color: #1f1f2e;
@@ -70,13 +69,13 @@ app.get('/', (req, res) => {
                 }
                 .footer {
                     margin-top: 30px;
-                    font-size: 14px;
+                    font-size: 15px;
                     color: #73738c;
                     border-top: 1px solid #2d2d3f;
                     padding-top: 15px;
                 }
                 .footer span {
-                    color: #00ffcc;
+                    color: #a855f7;
                     font-weight: bold;
                 }
                 @keyframes pulse {
@@ -88,8 +87,8 @@ app.get('/', (req, res) => {
         </head>
         <body>
             <div class="container">
-                <h1>🔊 BOT-LA-L 🔊</h1>
-                <p class="subtitle">Chipeo The Project Bot</p>
+                <h1>🔊 CHIPIEO THE PROJECT BOT 🔊</h1>
+                <p class="subtitle">El Bot de la L</p>
                 
                 <div class="status-card">
                     <span style="font-size: 18px; font-weight: bold;">Estado del Bot:</span>
@@ -99,12 +98,12 @@ app.get('/', (req, res) => {
                     </div>
                 </div>
 
-                <p style="color: #a3a3c2; line-height: 1.6;">
-                    Este es el panel principal de control para la comunidad. El bot se encuentra encendido las 24 horas controlando los comandos y manteniendo los sistemas de sonido ready.
+                <p style="color: #a3a3c2; line-height: 1.6; font-size: 16px;">
+                    Controlando la comunidad oficial de los musicólogos. El sistema está encendido las 24 horas rompiendo los bajos y activo para tirar las pautas por Discord.
                 </p>
 
                 <div class="footer">
-                    Desarrollado por <span>Los Reales Game de Computadora</span>
+                    Desarrollado con toda la grasa por el <span>Team Táctico</span>
                 </div>
             </div>
         </body>
@@ -120,7 +119,7 @@ const client = new Client({
     ]
 });
 
-// Comandos Slash (/)
+// Comandos Slash (/) actualizados
 const commands = [
     { name: 'ping', description: 'Prueba si el sistema de sonido del bot está ready' },
     {
@@ -128,11 +127,11 @@ const commands = [
         description: 'Manda un mensaje a través del bot ocultando tu perfil',
         options: [{ name: 'mensaje', type: 3, description: 'El código que le va\' a meter al chat', required: true }]
     },
-    { name: 'redes', description: 'Las redes oficiales de Chipeo The Project y Los Reales' }
+    { name: 'redes', description: 'Las redes oficiales de Chipeo The Project' }
 ];
 
 client.on('ready', async () => {
-    console.log(`✅ ¡Bot-la-L activo!`);
+    console.log(`✅ ¡Chipeo The Project Bot activo en la calle!`);
     client.user.setActivity('Chipeo The Project 🔊', { type: 3 }); 
     try {
         const rest = new REST({ version: '10' }).setToken(process.env.TOKEN);
@@ -145,26 +144,26 @@ client.on('interactionCreate', async (interaction) => {
     const { commandName } = interaction;
 
     if (commandName === 'ping') {
-        await interaction.reply({ content: '🎛️ ¡El sistema de sonido está ready, nítido de voces y con los bajos rompiendo! 🔊🔥' });
+        await interaction.reply({ content: '🎛️ ¡El sistema de sonido de **Chipeo The Project** está ready, nítido de voces y rompiendo los bajos! 🔊🔥' });
     }
     if (commandName === 'say') {
         const mensajeParaDecir = interaction.options.getString('mensaje');
         try {
-            await interaction.reply({ content: 'Soltando la pauta...', ephemeral: true });
+            await interaction.reply({ content: 'Soltando la pauta táctica...', ephemeral: true });
             await interaction.deleteReply();
             await interaction.channel.send(mensajeParaDecir);
         } catch (error) { console.error(error); }
     }
     if (commandName === 'redes') {
         const embedRedes = new EmbedBuilder()
-            .setColor('#00ffcc')
+            .setColor('#a855f7') // Color morado como el logo duro
             .setTitle('🔊 CHIPEO THE PROJECT - OFICIAL 🔊')
-            .setDescription('Dándole el verdadero apoyo al movimiento. ¡Sigue la vuelta y actívate en las redes!')
+            .setDescription('Dándole el verdadero apoyo al movimiento. ¡Sigue la vuelta y actívate con el coro!')
             .addFields(
                 { name: '🔥 Nuestro TikTok', value: '[¡Dale clic aquí para seguirnos y llegar a los 1k!](https://www.tiktok.com/)', inline: false },
-                { name: '🎮 Team de Desarrollo', value: 'Suelto por **Los Reales Game de Computadora** con el flow de Bobi y Sandi.', inline: false }
+                { name: '👑 Creadores', value: 'Proyecto desarrollado con el verdadero piquete por el **Team Táctico**.', inline: false }
             )
-            .setFooter({ text: 'Bot-la-L • Controlando la comunidad 🔊', iconURL: client.user.displayAvatarURL() });
+            .setFooter({ text: 'Chipeo The Project Bot • Controlando el bloque 🔊', iconURL: client.user.displayAvatarURL() });
         await interaction.reply({ embeds: [embedRedes] });
     }
 });
