@@ -1,10 +1,10 @@
 const { Client, GatewayIntentBits, REST, Routes, EmbedBuilder } = require('discord.js');
-const { joinVoiceChannel, createAudioPlayer, createAudioResource, AudioPlayerStatus } = require('@discordjs/voice');
-const play = require('play-dl'); // Librería dura para jalar música de YouTube/SoundCloud
+const { Connectors, Shoukaku } = require('shoukaku');
+const { Kazagumo } = require('kazagumo');
 const express = require('express');
 const app = express();
 
-// LA PÁGINA WEB 
+// PÁGINA WEB BASE PARA EL DASHBOARD
 app.get('/', (req, res) => { 
     res.send(`
         <!DOCTYPE html>
@@ -14,12 +14,13 @@ app.get('/', (req, res) => {
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <title>Chipeo The Project Bot | Web Oficial</title>
             <style>
-                body { background-color: #0b0b0f; color: #ffffff; font-family: sans-serif; margin: 0; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+                body { background-color: #0b0b0f; color: #ffffff; font-family: sans-serif; margin: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; }
                 .container { background: linear-gradient(145deg, #12121a, #1a1a26); border: 2px solid #a855f7; border-radius: 20px; padding: 40px; text-align: center; box-shadow: 0 0 30px #a855f7; max-width: 600px; width: 90%; }
                 h1 { color: #ffffff; text-shadow: 0 0 10px #a855f7; }
-                .subtitle { color: #a855f7; font-size: 20px; font-weight: bold; }
-                .status-card { background-color: #1f1f2e; border-left: 5px solid #00ffcc; padding: 15px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; }
+                .subtitle { color: #a855f7; font-size: 20px; font-weight: bold; margin-bottom: 25px; }
+                .status-card { background-color: #1f1f2e; border-left: 5px solid #00ffcc; padding: 15px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
                 .status-dot { width: 15px; height: 15px; background-color: #00ffcc; border-radius: 50%; box-shadow: 0 0 10px #00ffcc; }
+                .btn-dashboard { background-color: #a855f7; color: white; border: none; padding: 12px 25px; font-size: 16px; font-weight: bold; border-radius: 8px; cursor: pointer; box-shadow: 0 0 15px #a855f7; text-decoration: none; display: inline-block; }
                 .footer { margin-top: 30px; font-size: 15px; color: #73738c; border-top: 1px solid #2d2d3f; padding-top: 15px; }
                 .footer span { color: #a855f7; font-weight: bold; }
             </style>
@@ -29,13 +30,14 @@ app.get('/', (req, res) => {
                 <h1>🔊 CHIPIEO THE PROJECT BOT 🔊</h1>
                 <p class="subtitle">El Bot de la L</p>
                 <div class="status-card">
-                    <span>Estado del Bot:</span>
+                    <span style="font-weight: bold;">Estado del Bot:</span>
                     <div style="display: flex; align-items: center; gap: 10px;">
                         <span style="color: #00ffcc; font-weight: bold;">ONLINE</span>
                         <div class="status-dot"></div>
                     </div>
                 </div>
-                <p style="color: #a3a3c2;">Bot 24/7.</p>
+                <p style="color: #a3a3c2;">Panel de control base. Módulos de música y comunidad listos.</p>
+                <a href="#" class="btn-dashboard">Iniciar Sesión con Discord</a>
                 <div class="footer">Desarrollado con toda la grasa por el <span>Team Táctico</span></div>
             </div>
         </body>
@@ -44,19 +46,28 @@ app.get('/', (req, res) => {
 });
 app.listen(process.env.PORT || 3000);
 
-// IMPORTANTE: Le agregamos "GuildVoiceStates" para que el bot pueda entrar a los canales de voz
 const client = new Client({
     intents: [
         GatewayIntentBits.Guilds, 
         GatewayIntentBits.GuildMessages,
-        GatewayIntentBits.GuildVoiceStates
+        GatewayIntentBits.GuildVoiceStates,
+        GatewayIntentBits.GuildMessageReactions
     ]
 });
 
-// Crear el reproductor de música global
-const player = createAudioPlayer();
+// CONFIGURACIÓN DE LAVALINK (Para saltar bloqueos de YouTube)
+const Nodes = [{
+    name: 'ChipeoNode',
+    url: 'lava.link:80', // Servidor público estable de Lavalink
+    auth: 'youshallnotpass',
+    secure: false
+}];
 
-// Comandos Slash (/) incluyendo /play y /stop
+const kazagumo = new Kazagumo({
+    plugins: [],
+    defaultSearchEngine: 'youtube'
+}, new Shoukaku(new Connectors.DiscordJS(client), Nodes));
+
 const commands = [
     { name: 'ping', description: 'Prueba si el sistema de sonido del bot está ready' },
     {
@@ -67,14 +78,14 @@ const commands = [
     { name: 'redes', description: 'Las redes oficiales de Chipeo The Project' },
     {
         name: 'play',
-        description: 'Pon a sonar un chipeo o canción en el canal de voz',
-        options: [{ name: 'cancion', type: 3, description: 'Nombre o link de YouTube de la canción', required: true }]
+        description: 'Busca y reproduce música de YouTube/Spotify/SoundCloud',
+        options: [{ name: 'cancion', type: 3, description: 'Nombre o link del tema', required: true }]
     },
-    { name: 'stop', description: 'Saca al bot del canal de voz y para la música' }
+    { name: 'stop', description: 'Apaga el sistema de sonido por completo' }
 ];
 
 client.on('ready', async () => {
-    console.log(`✅ ¡Chipeo The Project Bot activo`);
+    console.log(`✅ ¡Chipeo The Project Bot activo con Lavalink!`);
     client.user.setActivity('Chipeo The Project 🔊', { type: 3 }); 
     try {
         const rest = new REST({ version: '10' }).setToken(process.env.TOKEN);
@@ -87,13 +98,13 @@ client.on('interactionCreate', async (interaction) => {
     const { commandName } = interaction;
 
     if (commandName === 'ping') {
-        await interaction.reply({ content: '🎛️  **Chipeo The Project** está ready  🔊🔥' });
+        await interaction.reply({ content: '🎛️ ¡El sistema de sonido está activo y sonando nítido! 🔊🔥' });
     }
 
     if (commandName === 'say') {
         const mensajeParaDecir = interaction.options.getString('mensaje');
         try {
-            await interaction.reply({ content: 'Soltando la pauta táctica...', ephemeral: true });
+            await interaction.reply({ content: 'Soltando la pauta...', ephemeral: true });
             await interaction.deleteReply();
             await interaction.channel.send(mensajeParaDecir);
         } catch (error) { console.error(error); }
@@ -108,72 +119,58 @@ client.on('interactionCreate', async (interaction) => {
                 { name: '🔥 Nuestro TikTok', value: '[¡Dale clic aquí para seguirnos!](https://www.tiktok.com/)', inline: false },
                 { name: '👑 Creadores', value: 'Desarrollado por el **Team Táctico**.', inline: false }
             )
-            .setFooter({ text: 'Chipeo The Project Bot • Controlando el bloque 🔊' });
+            .setFooter({ text: 'Chipeo The Project Bot 🔊' });
         await interaction.reply({ embeds: [embedRedes] });
     }
 
-    // 🎵 COMANDO /play (IGUAL A JOCKEY)
+    // 🎵 COMANDO /play TOTALMENTE RENOVADO CON KAZAGUMO
     if (commandName === 'play') {
         const canalVoz = interaction.member.voice.channel;
-        
-        // Verificar si el usuario está en un canal de voz
-        if (!canalVoz) {
-            return interaction.reply({ content: '⚠️ ¡Tienes que meterte a un canal de voz primero para armar el chipeo!', ephemeral: true });
-        }
+        if (!canalVoz) return interaction.reply({ content: '⚠️ ¡Métete a un canal de voz primero, bro!', ephemeral: true });
 
-        const busqueda = interaction.options.getString('cancion');
-        await interaction.reply({ content: `🔍 Buscando \`${busqueda}\` para poner los bajos a romper...` });
+        const query = interaction.options.getString('cancion');
+        await interaction.reply({ content: `🔍 Buscando \`${query}\` en la base de datos completa...` });
 
         try {
-            // Conectar el bot al canal de voz
-            const connection = joinVoiceChannel({
-                channelId: canalVoz.id,
+            // Crear o jalar el reproductor del servidor
+            const player = await kazagumo.createPlayer({
                 guildId: interaction.guild.id,
-                adapterCreator: interaction.guild.voiceAdapterCreator,
+                textId: interaction.channel.id,
+                voiceId: canalVoz.id,
+                deaf: true
             });
 
-            // Buscar el audio en YouTube
-            let yt_info = await play.search(busqueda, { limit: 1 });
-            if (yt_info.length === 0) return interaction.editReply('❌ No encontré esa canción, bro.');
+            // Buscar en todo el internet (YouTube, SoundCloud, Spotify links)
+            const result = await kazagumo.search(query, { requester: interaction.user });
+            if (!result.tracks.length) return interaction.editReply('❌ No encontré nada con ese nombre.');
 
-            let stream = await play.stream(yt_info[0].url);
-            let resource = createAudioResource(stream.stream, { inputType: stream.type });
+            // Meter a la lista de reproducción
+            player.queue.add(result.tracks[0]);
+            if (!player.playing && !player.paused) player.play();
 
-            // Reproducir
-            player.play(resource);
-            connection.subscribe(player);
-
-            // Mensaje elegante estilo Jockey
             const embedMusica = new EmbedBuilder()
                 .setColor('#00ffcc')
                 .setTitle('🎶 SONANDO EN EL SISTEMA 🔊')
-                .setDescription(`**[${yt_info[0].title}](${yt_info[0].url})**`)
-                .setThumbnail(yt_info[0].thumbnails[0].url)
-                .addFields({ name: '⏱️ Duración', value: yt_info[0].durationRaw, inline: true })
+                .setDescription(`**[${result.tracks[0].title}](${result.tracks[0].uri})**`)
+                .setThumbnail(result.tracks[0].thumbnail || null)
+                .addFields({ name: '👤 Agregada por', value: `${interaction.user}`, inline: true })
                 .setFooter({ text: 'Pauta musical del Team Táctico 🔥' });
 
             await interaction.editReply({ content: ' ', embeds: [embedMusica] });
 
         } catch (error) {
             console.error(error);
-            await interaction.editReply('❌ Hubo un error al intentar poner la música.');
+            await interaction.editReply('❌ Error al procesar el audio del servidor.');
         }
     }
 
-    // 🛑 COMANDO /stop
     if (commandName === 'stop') {
-        const connection = joinVoiceChannel({
-            channelId: interaction.member.voice.channel?.id,
-            guildId: interaction.guild.id,
-            adapterCreator: interaction.guild.voiceAdapterCreator,
-        });
-
-        if (connection) {
-            player.stop();
-            connection.destroy();
-            await interaction.reply('🔇 ¡Se apagó el sistema de sonido! El bot salió del canal.');
+        const player = kazagumo.players.get(interaction.guild.id);
+        if (player) {
+            player.destroy();
+            await interaction.reply('静 ¡Se apagó el sistema de sonido! Bot fuera del canal.');
         } else {
-            await interaction.reply({ content: 'El bot no está en ningún canal de voz ahora mismo.', ephemeral: true });
+            await interaction.reply({ content: 'El bot no está tocando música ahora mismo.', ephemeral: true });
         }
     }
 });
