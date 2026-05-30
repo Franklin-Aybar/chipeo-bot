@@ -4,7 +4,7 @@ const { Kazagumo } = require('kazagumo');
 const express = require('express');
 const app = express();
 
-// PÁGINA WEB - DASHBOARD AVANZADO CON EL PIQUETE DEL TEAM TÁCTICO
+// LA PÁGINA WEB EXACTA A TU CAPTURA (Brillo Neón y los créditos de tu empresa)
 app.get('/', (req, res) => { 
     res.send(`
         <!DOCTYPE html>
@@ -14,145 +14,105 @@ app.get('/', (req, res) => {
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <title>Chipeo The Project Bot | Web Oficial</title>
             <style>
-                body { 
-                    background-color: #0b0b0f; 
-                    color: #ffffff; 
-                    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-                    margin: 0; 
+                body {
+                    background-color: #050508;
+                    color: #ffffff;
+                    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                    margin: 0;
                     padding: 0;
-                    display: flex; 
-                    flex-direction: column; 
-                    align-items: center; 
-                    justify-content: center; 
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
                     min-height: 100vh;
                 }
-                .container { 
-                    background: linear-gradient(145deg, #12121a, #1a1a26); 
-                    border: 2px solid #a855f7; 
-                    border-radius: 20px; 
-                    padding: 35px; 
-                    text-align: center; 
-                    box-shadow: 0 0 35px rgba(168, 85, 247, 0.4); 
-                    max-width: 850px; 
-                    width: 90%; 
-                    margin: 20px auto;
+                .container {
+                    background-color: #12121a;
+                    border: 2px solid #00ffcc;
+                    border-radius: 20px;
+                    padding: 40px;
+                    text-align: center;
+                    box-shadow: 0 0 35px #00ffcc, inset 0 0 15px rgba(0, 255, 204, 0.1);
+                    max-width: 700px;
+                    width: 90%;
                 }
-                h1 { 
-                    color: #ffffff; 
-                    text-shadow: 0 0 15px #a855f7; 
-                    font-size: 32px;
+                .title-container {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 15px;
                     margin-bottom: 5px;
+                }
+                h1 {
+                    color: #00ffcc;
+                    font-size: 36px;
+                    margin: 0;
+                    text-transform: uppercase;
                     letter-spacing: 2px;
+                    text-shadow: 0 0 10px rgba(0, 255, 204, 0.6);
+                    font-weight: 800;
                 }
-                .subtitle { 
-                    color: #a855f7; 
-                    font-size: 22px; 
-                    font-weight: bold; 
-                    margin-top: 0;
-                    margin-bottom: 25px; 
-                    text-shadow: 0 0 5px rgba(168, 85, 247, 0.5);
+                .subtitle {
+                    color: #ff007f;
+                    font-size: 18px;
+                    font-weight: bold;
+                    margin-top: 5px;
+                    margin-bottom: 35px;
                 }
-                .status-card { 
-                    background-color: #171724; 
-                    border: 1px solid #2d2d3f;
-                    border-left: 5px solid #00ffcc; 
-                    padding: 15px 25px; 
-                    border-radius: 10px; 
-                    display: flex; 
-                    justify-content: space-between; 
-                    align-items: center; 
-                    margin-bottom: 30px; 
+                .status-card {
+                    background-color: #171724;
+                    border-left: 5px solid #00ffcc;
+                    padding: 18px 25px;
+                    border-radius: 10px;
+                    margin: 25px 0;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
                 }
-                .status-dot { 
-                    width: 14px; 
-                    height: 14px; 
-                    background-color: #00ffcc; 
-                    border-radius: 50%; 
-                    box-shadow: 0 0 12px #00ffcc; 
+                .status-label {
+                    font-size: 20px;
+                    font-weight: bold;
+                    color: #ffffff;
+                }
+                .status-value {
+                    display: flex;
+                    align-items: center;
+                    gap: 12px;
+                }
+                .status-text {
+                    color: #00ffcc;
+                    font-weight: bold;
+                    font-size: 18px;
+                    letter-spacing: 1px;
+                }
+                .status-dot {
+                    width: 16px;
+                    height: 16px;
+                    background-color: #00ffcc;
+                    border-radius: 50%;
+                    box-shadow: 0 0 12px #00ffcc;
                     animation: pulse 1.5s infinite;
                 }
-                
-                /* GRILLA DE MÓDULOS ESTILO BOT GRANDE */
-                .modules-grid {
-                    display: grid;
-                    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-                    gap: 20px;
-                    margin-top: 20px;
+                .description {
+                    color: #8f8fbc;
+                    line-height: 1.7;
+                    font-size: 16px;
+                    margin: 25px auto;
+                    max-width: 580px;
                 }
-                .module-card {
-                    background: #151522;
-                    border: 1px solid #252538;
-                    border-radius: 12px;
-                    padding: 20px;
-                    text-align: left;
-                    transition: all 0.3s ease;
-                }
-                .module-card:hover {
-                    transform: translateY(-5px);
-                    border-color: #a855f7;
-                    box-shadow: 0 5px 15px rgba(168, 85, 247, 0.2);
-                }
-                .module-icon {
-                    font-size: 24px;
-                    margin-bottom: 10px;
-                }
-                .module-card h3 {
-                    margin: 0 0 8px 0;
-                    color: #ffffff;
-                    font-size: 18px;
-                }
-                .module-card p {
-                    margin: 0 0 15px 0;
-                    color: #a3a3c2;
-                    font-size: 14px;
-                    line-height: 1.4;
-                }
-                .btn-module {
-                    background-color: #1f1f33;
-                    color: #a855f7;
-                    border: 1px solid #a855f7;
-                    padding: 8px 15px;
-                    font-size: 13px;
-                    font-weight: bold;
-                    border-radius: 6px;
-                    cursor: pointer;
-                    width: 100%;
-                    transition: 0.2s;
-                }
-                .btn-module:hover {
-                    background-color: #a855f7;
-                    color: #white;
-                    box-shadow: 0 0 10px rgba(168, 85, 247, 0.4);
-                }
-
-                .btn-login { 
-                    background: linear-gradient(90deg, #a855f7, #7e22ce);
-                    color: white; 
-                    border: none; 
-                    padding: 14px 35px; 
-                    font-size: 16px; 
-                    font-weight: bold; 
-                    border-radius: 8px; 
-                    cursor: pointer; 
-                    box-shadow: 0 0 20px rgba(168, 85, 247, 0.5); 
-                    text-decoration: none; 
-                    display: inline-block; 
+                .divider {
+                    border: none;
+                    border-top: 1px solid #1f1f30;
                     margin-top: 30px;
-                    transition: 0.3s;
+                    margin-bottom: 20px;
                 }
-                .btn-login:hover { 
-                    transform: scale(1.03);
-                    box-shadow: 0 0 30px #a855f7; 
+                .footer {
+                    font-size: 14px;
+                    color: #5c5c7d;
                 }
-                .footer { 
-                    margin-top: 40px; 
-                    font-size: 15px; 
-                    color: #73738c; 
-                    border-top: 1px solid #2d2d3f; 
-                    padding-top: 15px; 
+                .footer span {
+                    color: #00ffcc;
+                    font-weight: bold;
                 }
-                .footer span { color: #a855f7; font-weight: bold; }
-                
                 @keyframes pulse {
                     0% { transform: scale(0.9); opacity: 0.7; }
                     50% { transform: scale(1.1); opacity: 1; }
@@ -162,42 +122,29 @@ app.get('/', (req, res) => {
         </head>
         <body>
             <div class="container">
-                <h1>🔊 CHIPIEO THE PROJECT BOT 🔊</h1>
-                <p class="subtitle">El Bot de la L</p>
+                <div class="title-container">
+                    <span style="font-size: 32px;">🔊</span>
+                    <h1>BOT-LA-L</h1>
+                    <span style="font-size: 32px;">🔊</span>
+                </div>
+                <div class="subtitle">Chipeo The Project Bot</div>
                 
                 <div class="status-card">
-                    <span style="font-size: 18px; font-weight: bold;">Estado del Bot:</span>
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <span style="color: #00ffcc; font-weight: bold; letter-spacing: 1px;">ONLINE</span>
+                    <span class="status-label">Estado del Bot:</span>
+                    <div class="status-value">
+                        <span class="status-text">ONLINE</span>
                         <div class="status-dot"></div>
                     </div>
                 </div>
 
-                <div class="modules-grid">
-                    <div class="module-card">
-                        <div class="module-icon">🎵</div>
-                        <h3>Módulo de Música</h3>
-                        <p>Controla el sistema de reproducción avanzado estilo Jockey de los canales de voz.</p>
-                        <button class="btn-module">Configurar Música</button>
-                    </div>
-                    <div class="module-card">
-                        <div class="module-icon">🛡️</div>
-                        <h3>Moderación Táctica</h3>
-                        <p>Limpia chats, banea y silencia usuarios molestos para mantener la paz en el bloque.</p>
-                        <button class="btn-module">Configurar Filtros</button>
-                    </div>
-                    <div class="module-card">
-                        <div class="module-icon">👋</div>
-                        <h3>Bienvenidas</h3>
-                        <p>Dale la pauta oficial y saluda automáticamente a los nuevos musicólogos del servidor.</p>
-                        <button class="btn-module">Configurar Mensajes</button>
-                    </div>
-                </div>
+                <p class="description">
+                    Este es el panel principal de control para la comunidad. El bot se encuentra encendido las 24 horas controlando los comandos y manteniendo los sistemas de sonido ready.
+                </p>
 
-                <a href="#" class="btn-login">Panel de Control General</a>
+                <hr class="divider">
 
                 <div class="footer">
-                    Desarrollado con toda la grasa por el <span>Team Táctico</span>
+                    Desarrollado por <span>Los Reales Game de Computadora</span>
                 </div>
             </div>
         </body>
@@ -222,10 +169,12 @@ const Nodes = [{
     secure: false
 }];
 
+// Arreglo del conector para evitar el error de "connector.set" de Shoukaku v4
+const shoukaku = new Shoukaku(new Connectors.DiscordJS(client), Nodes);
 const kazagumo = new Kazagumo({
     plugins: [],
     defaultSearchEngine: 'youtube'
-}, new Shoukaku(new Connectors.DiscordJS(client), Nodes));
+}, shoukaku);
 
 const commands = [
     { name: 'ping', description: 'Prueba si el sistema de sonido del bot está ready' },
@@ -257,6 +206,7 @@ client.on('ready', async () => {
     } catch (error) { console.error(error); }
 });
 
+// Manejador de interacciones para comandos
 client.on('interactionCreate', async (interaction) => {
     if (!interaction.isChatInputCommand()) return;
     const { commandName } = interaction;
@@ -326,27 +276,27 @@ client.on('interactionCreate', async (interaction) => {
 
     if (commandName === 'skip') {
         player.skip();
-        return interaction.reply('⏭️ ¡Canción saltada! Pasando a la siguiente.');
+        return interaction.reply('⏭️ ¡Canción saltada!');
     }
 
     if (commandName === 'pause') {
-        if (player.paused) return interaction.reply({ content: '⚠️ El sistema ya está pausado.', ephemeral: true });
+        if (player.paused) return interaction.reply({ content: '⚠️ Ya está pausado.', ephemeral: true });
         player.pause(true);
         return interaction.reply('⏸️ Música pausada.');
     }
 
     if (commandName === 'resume') {
-        if (!player.paused) return interaction.reply({ content: '⚠️ La música ya está sonando.', ephemeral: true });
+        if (!player.paused) return interaction.reply({ content: '⚠️ Ya está sonando.', ephemeral: true });
         player.pause(false);
-        return interaction.reply('▶️ Sistema activo otra vez, ¡que sigan los bajos!');
+        return interaction.reply('▶️ ¡Sigue la música!');
     }
 
     if (commandName === 'queue') {
         const lista = player.queue.map((track, index) => `**${index + 1}.** ${track.title}`).join('\n');
         const embedQueue = new EmbedBuilder()
             .setColor('#a855f7')
-            .setTitle('📋 LISTA DE ESPERA (QUEUE)')
-            .setDescription(lista || 'No hay más canciones en cola. ¡Pon más con `/play`!');
+            .setTitle('📋 LISTA DE ESPERA')
+            .setDescription(lista || 'No hay más canciones en cola.');
         return interaction.reply({ embeds: [embedQueue] });
     }
 
@@ -355,16 +305,15 @@ client.on('interactionCreate', async (interaction) => {
         if (!track) return interaction.reply('No hay nada sonando.');
         const embedNp = new EmbedBuilder()
             .setColor('#00ffcc')
-            .setTitle('🔊 ESCUCHANDO AHORA MISMITO 🔊')
+            .setTitle('🔊 ESCUCHANDO AHORA 🔊')
             .setDescription(`**[${track.title}](${track.uri})**`)
-            .setThumbnail(track.thumbnail || null)
-            .addFields({ name: '👤 Pedida por', value: `${track.requester}`, inline: true });
+            .setThumbnail(track.thumbnail || null);
         return interaction.reply({ embeds: [embedNp] });
     }
 
     if (commandName === 'stop') {
         player.destroy();
-        return interaction.reply('🔇 ¡Sistema apagado por completo! El bot limpió la cola y salió.');
+        return interaction.reply('🔇 ¡Sistema apagado por completo!');
     }
 });
 
