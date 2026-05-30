@@ -6,6 +6,7 @@ const app = express();
 
 const LOGO_BOT = "https://raw.githubusercontent.com/Franklin-Aybar/chipeo-bot/main/Chipeo_The_Project_Mesa_de_trabajo_1_Mesa_de_trabajo_1_Mesa_de_trabajo_1_Mesa_de_trabajo_1.png";
 
+// --- SERVIDOR WEB PARA MANTENERLO ACTIVO EN RENDER ---
 app.get('/', (req, res) => { 
     res.send(`
         <!DOCTYPE html>
@@ -46,23 +47,23 @@ const Nodes = [
     { name: 'Node-Respaldo', url: 'lavalink.juice-mizuki.my.id:80', auth: 'youshallnotpass', secure: false }
 ];
 
-// Inicialización estándar compatible
-const shoukaku = new Shoukaku(new Connectors.DiscordJS(client), Nodes, { moveOnDisconnect: true });
+// --- INICIALIZACIÓN CORREGIDA ---
+const shoukaku = new Shoukaku(new Connectors.DiscordJS(client), Nodes, { 
+    moveOnDisconnect: true,
+    resume: true 
+});
+
 const kazagumo = new Kazagumo({
-    plugins: [],
-    defaultSearchEngine: 'youtube',
-    send: (id, payload) => {
-        const guild = client.guilds.cache.get(id);
-        if (guild) guild.shard.send(payload);
-    }
+    defaultSearchEngine: 'youtube'
 }, shoukaku);
+// --- FIN DE INICIALIZACIÓN ---
 
 const commands = [
-    { name: 'ping', description: 'Prueba si el sistema de sonido del bot está ready' },
-    { name: 'say', description: 'Manda un mensaje a través del bot', options: [{ name: 'mensaje', type: 3, description: 'Texto a decir', required: true }] },
-    { name: 'redes', description: 'Las redes oficiales de Chipeo The Project' },
+    { name: 'ping', description: 'Prueba si el sistema de sonido está ready' },
+    { name: 'say', description: 'Manda un mensaje', options: [{ name: 'mensaje', type: 3, description: 'Texto a decir', required: true }] },
+    { name: 'redes', description: 'Redes oficiales' },
     { name: 'play', description: 'Reproduce música', options: [{ name: 'cancion', type: 3, description: 'Nombre o link', required: true }] },
-    { name: 'skip', description: 'Salta la canción actual' },
+    { name: 'skip', description: 'Salta la canción' },
     { name: 'stop', description: 'Saca al bot del canal' }
 ];
 
@@ -132,6 +133,7 @@ client.on('interactionCreate', async (interaction) => {
 
             return interaction.editReply({ content: ' ', embeds: [embedPlay] });
         } catch (e) {
+            console.error(e); // Ver el error específico en logs de Render
             return interaction.editReply('⚠️ Error al conectar al nodo de audio. Intenta de nuevo.');
         }
     }
