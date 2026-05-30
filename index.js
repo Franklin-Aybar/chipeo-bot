@@ -4,10 +4,10 @@ const { Kazagumo } = require('kazagumo');
 const express = require('express');
 const app = express();
 
-// LOGO OFICIAL DE CHIPEO THE PROJECT
+// LOGO OFICIAL DEL BOT
 const LOGO_BOT = "https://raw.githubusercontent.com/Franklin-Aybar/chipeo-bot/main/Chipeo_The_Project_Mesa_de_trabajo_1_Mesa_de_trabajo_1_Mesa_de_trabajo_1_Mesa_de_trabajo_1.png";
 
-// PÁGINA WEB OFICIAL (Estilo BOT-LA-L y Los Reales Game de Computadora)
+// PANEL WEB WEB (Estilo BOT-LA-L y Los Reales Game de Computadora)
 app.get('/', (req, res) => { 
     res.send(`
         <!DOCTYPE html>
@@ -15,7 +15,7 @@ app.get('/', (req, res) => {
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>BOT-LA-L | Panel de Control</title>
+            <title>BOT-LA-L | Web Oficial</title>
             <style>
                 body {
                     background-color: #06060c;
@@ -43,7 +43,6 @@ app.get('/', (req, res) => {
                     align-items: center;
                     justify-content: center;
                     gap: 12px;
-                    margin-bottom: 2px;
                 }
                 h1 {
                     color: #00ffcc;
@@ -75,16 +74,10 @@ app.get('/', (req, res) => {
                     font-size: 19px;
                     font-weight: bold;
                 }
-                .status-value {
-                    display: flex;
-                    align-items: center;
-                    gap: 10px;
-                }
                 .status-text {
                     color: #00ffcc;
                     font-weight: bold;
                     font-size: 16px;
-                    letter-spacing: 1px;
                 }
                 .status-dot {
                     width: 14px;
@@ -97,7 +90,6 @@ app.get('/', (req, res) => {
                 .description {
                     color: #8c8cbd;
                     line-height: 1.6;
-                    font-size: 15px;
                 }
                 .divider {
                     border: none;
@@ -131,14 +123,14 @@ app.get('/', (req, res) => {
                 
                 <div class="status-card">
                     <span class="status-label">Estado del Bot:</span>
-                    <div class="status-value">
+                    <div style="display: flex; align-items: center; gap: 10px;">
                         <span class="status-text">ONLINE EN LA CALLE</span>
                         <div class="status-dot"></div>
                     </div>
                 </div>
 
                 <p class="description">
-                    Este es el panel principal de control para la comunidad. El bot se encuentra encendido las 24 horas controlando los comandos y manteniendo los sistemas de sonido ready.
+                    Panel principal del bot. Encendido las 24 horas controlando los comandos y manteniendo los sistemas de sonido ready.
                 </p>
 
                 <hr class="divider">
@@ -161,7 +153,7 @@ const client = new Client({
     ]
 });
 
-// NODOS LAVALINK PÚBLICOS ESTABLES Y VERIFICADOS
+// NODOS AUDIO LAVALINK ACTIVOS
 const Nodes = [
     {
         name: 'Chipeo-Node-A',
@@ -177,7 +169,7 @@ const Nodes = [
     }
 ];
 
-// ARREGLO CRÍTICO: Inicialización directa del Connector pasando el cliente directamente a Kazagumo
+// ARREGLO INTEGRAL DE CONECTORES PARA ELIMINAR EL ERROR INTERNO
 const shoukaku = new Shoukaku(new Connectors.DiscordJS(client), Nodes, {
     moveOnDisconnect: true,
     reconnectTries: 5,
@@ -187,7 +179,6 @@ const shoukaku = new Shoukaku(new Connectors.DiscordJS(client), Nodes, {
 const kazagumo = new Kazagumo({
     plugins: [],
     defaultSearchEngine: 'youtube',
-    // Forzamos el envío de datos directamente por los Shards para saltarnos el error interno de Shoukaku
     send: (id, payload) => {
         const guild = client.guilds.cache.get(id);
         if (guild) guild.shard.send(payload);
